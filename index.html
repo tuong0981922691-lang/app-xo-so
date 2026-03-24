@@ -19,7 +19,7 @@ body { font-family:'Be Vietnam Pro', sans-serif; background:#f2f3f5; min-height:
 .page.active { display:flex; }
 
 /* =========================================
-   [CSS-HOME] Trang Chủ & Thông Điệp
+   [CSS-HOME] Trang Chủ
    ========================================= */
 .header { text-align:center; margin-bottom:24px; background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
 .message-line { font-size:16px; font-weight:800; color:#d90429; line-height:1.4; }
@@ -39,36 +39,38 @@ body { font-family:'Be Vietnam Pro', sans-serif; background:#f2f3f5; min-height:
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-4 { grid-template-columns: repeat(4, 1fr); }
 
-/* Mã Ký Hiệu Đặc Biệt */
 .ma-db-style { text-align:center; font-size:15px; font-weight:800; color:#555; letter-spacing:2px; margin-bottom:6px; padding:4px; background:#f8f9fa; border-radius:6px; }
 
 .num-box { font-variant-numeric: tabular-nums; font-weight: 900; font-size: 20px; text-align: center; color: #111; letter-spacing: 1px; }
 .num-box.db { font-size: 30px; color: #d90429; text-shadow: 1px 1px 2px rgba(217,4,41,0.2); }
 .last-two { color: #ff1744; }
 
-.db-rolling-strip { display:none; font-size:28px; font-weight:900; color:#888; text-align:center; letter-spacing:4px; animation: pulse 0.3s infinite alternate; }
-@keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
-
 /* =========================================
-   [CSS-STATS] Bottom Sheet (Trượt Full Màn Hình)
+   [CSS-STATS] Bottom Sheet & Ruột Thống Kê VIP
    ========================================= */
 .bottom-sheet { 
     position:absolute; bottom:0; left:0; width:100%; 
-    height: 90vh; /* Độ cao 90% màn hình để che bảng KQ */
+    height: 90vh; 
     background:#ffffff; border-radius:24px 24px 0 0; 
     box-shadow:0 -10px 25px rgba(0,0,0,0.2); 
     transition:transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); 
     z-index:999; display:flex; flex-direction:column; 
-    /* Trạng thái đóng: Tụt xuống dưới, chỉ hở ra 60px tay cầm */
     transform:translateY(calc(100% - 60px)); 
 }
-.bottom-sheet.active { 
-    transform:translateY(0); /* Trạng thái mở: Vuốt lên che kín */
-}
-.drag-handle { width:50px; height:6px; background:#ccc; border-radius:10px; margin:15px auto; }
-.sheet-title { text-align:center; font-weight:900; color:#d90429; font-size:16px; margin-bottom:10px; text-transform:uppercase; }
-.stats-header { display:grid; grid-template-columns:repeat(7, 1fr); text-align:center; font-weight:800; font-size:13px; color:#555; padding:12px; background:#f8f9fa; border-bottom:1px solid #ddd; }
-.sheet-content { flex:1; overflow-y:auto; padding:10px; }
+.bottom-sheet.active { transform:translateY(0); }
+.drag-handle { width:50px; height:6px; background:#ccc; border-radius:10px; margin:15px auto; cursor:pointer; }
+.sheet-title { text-align:center; font-weight:900; color:#d90429; font-size:16px; margin-bottom:5px; text-transform:uppercase; }
+
+/* CSS do BOSS cung cấp đã được đổ bê tông */
+.stats-container { width: 100%; max-width: 100%; background: #ffffff; font-size: 11px; overflow-x: hidden; display: flex; flex-direction: column; flex: 1; overflow-y: hidden; }
+.stats-header { display: grid; grid-template-columns: repeat(7, 1fr); background: #f8f9fa; border-bottom: 2px solid #d90429; font-weight: 900; text-align: center; padding: 12px 0; color: #111; position: sticky; top: 0; z-index: 10; }
+.stats-body { display: flex; flex-direction: column; overflow-y: auto; flex: 1; padding-bottom: 30px; }
+.stats-row { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid #eee; }
+.stats-cell { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-right: 1px solid #eee; font-weight: 900; font-variant-numeric: tabular-nums; letter-spacing: 0px; }
+.stats-cell:last-child { border-right: none; }
+.num-head { color: #555; }
+.num-tail { color: #ff1744; text-shadow: 0 0 1px rgba(255,23,68,0.3); }
+.stats-cell.empty { background: #fafafa; }
 </style>
 </head>
 
@@ -92,35 +94,56 @@ body { font-family:'Be Vietnam Pro', sans-serif; background:#f2f3f5; min-height:
         </div>
 
         <div class="mb-result" id="result-board">
-            <div class="ma-db-style" id="ma-db">KÝ HIỆU: -- -- --</div>
-            <div class="db-rolling-strip" id="db-rolling">0-0-0-0-0</div>
-            <div class="prize-row grid-1"><div class="num-box db" id="prize-db">-----</div></div>
-
-            <div class="prize-row grid-1"><div class="num-box" id="prize-g1-0">-----</div></div>
-            <div class="prize-row grid-2"><div class="num-box" id="prize-g2-0">-----</div><div class="num-box" id="prize-g2-1">-----</div></div>
-            <div class="prize-row grid-3"><div class="num-box" id="prize-g3-0">-----</div><div class="num-box" id="prize-g3-1">-----</div><div class="num-box" id="prize-g3-2">-----</div><div class="num-box" id="prize-g3-3">-----</div><div class="num-box" id="prize-g3-4">-----</div><div class="num-box" id="prize-g3-5">-----</div></div>
-            <div class="prize-row grid-4"><div class="num-box" id="prize-g4-0">----</div><div class="num-box" id="prize-g4-1">----</div><div class="num-box" id="prize-g4-2">----</div><div class="num-box" id="prize-g4-3">----</div></div>
-            <div class="prize-row grid-3"><div class="num-box" id="prize-g5-0">----</div><div class="num-box" id="prize-g5-1">----</div><div class="num-box" id="prize-g5-2">----</div><div class="num-box" id="prize-g5-3">----</div><div class="num-box" id="prize-g5-4">----</div><div class="num-box" id="prize-g5-5">----</div></div>
-            <div class="prize-row grid-3"><div class="num-box" id="prize-g6-0">---</div><div class="num-box" id="prize-g6-1">---</div><div class="num-box" id="prize-g6-2">---</div></div>
-            <div class="prize-row grid-4"><div class="num-box" id="prize-g7-0">--</div><div class="num-box" id="prize-g7-1">--</div><div class="num-box" id="prize-g7-2">--</div><div class="num-box" id="prize-g7-3">--</div></div>
+            <div class="ma-db-style" id="ma-db">KÝ HIỆU: 1A - 2B - 3C</div>
+            <div class="prize-row grid-1"><div class="num-box db" id="prize-db">123<span class="last-two">45</span></div></div>
+            <div class="prize-row grid-1"><div class="num-box">543<span class="last-two">21</span></div></div>
+            <div class="prize-row grid-2"><div class="num-box">111<span class="last-two">11</span></div><div class="num-box">222<span class="last-two">22</span></div></div>
+            <div class="prize-row grid-3"><div class="num-box">123<span class="last-two">45</span></div><div class="num-box">234<span class="last-two">56</span></div><div class="num-box">345<span class="last-two">67</span></div><div class="num-box">456<span class="last-two">78</span></div><div class="num-box">567<span class="last-two">89</span></div><div class="num-box">678<span class="last-two">90</span></div></div>
+            <div class="prize-row grid-4"><div class="num-box">12<span class="last-two">34</span></div><div class="num-box">23<span class="last-two">45</span></div><div class="num-box">34<span class="last-two">56</span></div><div class="num-box">45<span class="last-two">67</span></div></div>
+            <div class="prize-row grid-3"><div class="num-box">11<span class="last-two">11</span></div><div class="num-box">22<span class="last-two">22</span></div><div class="num-box">33<span class="last-two">33</span></div><div class="num-box">44<span class="last-two">44</span></div><div class="num-box">55<span class="last-two">55</span></div><div class="num-box">66<span class="last-two">66</span></div></div>
+            <div class="prize-row grid-3"><div class="num-box">1<span class="last-two">23</span></div><div class="num-box">4<span class="last-two">56</span></div><div class="num-box">7<span class="last-two">89</span></div></div>
+            <div class="prize-row grid-4"><div class="num-box last-two">01</div><div class="num-box last-two">02</div><div class="num-box last-two">03</div><div class="num-box last-two">04</div></div>
         </div>
 
         <div class="bottom-sheet" id="bottomSheet">
             <div class="drag-handle"></div>
-            <div class="sheet-title">VUỐT LÊN ĐỂ XEM THỐNG KÊ</div>
-            <div class="stats-header"><div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div></div>
-            <div class="sheet-content">
-                <div style="text-align:center; padding:30px; color:#888; font-weight:700;">CHỨC NĂNG BẢNG THỐNG KÊ SẼ NẰM Ở ĐÂY<br><br>VUỐT XUỐNG ĐỂ ĐÓNG</div>
+            <div class="sheet-title">BẢNG THỐNG KÊ ĐẶC BIỆT</div>
+            
+            <div class="stats-container">
+                <div class="stats-header">
+                    <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div>
+                </div>
+                
+                <div class="stats-body">
+                    <div class="stats-row">
+                        <div class="stats-cell"><span class="num-head">123</span><span class="num-tail">45</span></div>
+                        <div class="stats-cell"><span class="num-head">678</span><span class="num-tail">90</span></div>
+                        <div class="stats-cell"><span class="num-head">543</span><span class="num-tail">21</span></div>
+                        <div class="stats-cell"><span class="num-head">987</span><span class="num-tail">65</span></div>
+                        <div class="stats-cell"><span class="num-head">112</span><span class="num-tail">23</span></div>
+                        <div class="stats-cell"><span class="num-head">445</span><span class="num-tail">56</span></div>
+                        <div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-cell"><span class="num-head">990</span><span class="num-tail">12</span></div>
+                        <div class="stats-cell"><span class="num-head">334</span><span class="num-tail">45</span></div>
+                        <div class="stats-cell"><span class="num-head">556</span><span class="num-tail">67</span></div>
+                        <div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div>
+                        <div class="stats-cell"><span class="num-head">112</span><span class="num-tail">34</span></div>
+                        <div class="stats-cell empty">-</div>
+                        <div class="stats-cell empty">-</div>
+                    </div>
+                    <div class="stats-row"><div class="stats-cell"><span class="num-head">123</span><span class="num-tail">45</span></div><div class="stats-cell"><span class="num-head">678</span><span class="num-tail">90</span></div><div class="stats-cell"><span class="num-head">543</span><span class="num-tail">21</span></div><div class="stats-cell"><span class="num-head">987</span><span class="num-tail">65</span></div><div class="stats-cell"><span class="num-head">112</span><span class="num-tail">23</span></div><div class="stats-cell"><span class="num-head">445</span><span class="num-tail">56</span></div><div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div></div>
+                    <div class="stats-row"><div class="stats-cell"><span class="num-head">123</span><span class="num-tail">45</span></div><div class="stats-cell"><span class="num-head">678</span><span class="num-tail">90</span></div><div class="stats-cell"><span class="num-head">543</span><span class="num-tail">21</span></div><div class="stats-cell"><span class="num-head">987</span><span class="num-tail">65</span></div><div class="stats-cell"><span class="num-head">112</span><span class="num-tail">23</span></div><div class="stats-cell"><span class="num-head">445</span><span class="num-tail">56</span></div><div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div></div>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
 
 <script>
 if(window.Telegram && Telegram.WebApp){ Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
 
-// KỊCH BẢN THẦY GIÁO TUẤN ĐỨC (ĐÃ XÓA BỎ THẦN MÈO)
 const greetings = [
     "Xin chào các cô, các chú, các anh, các chị!",
     "Hôm nay vận đỏ, Tuấn Đức chúc anh em trúng lớn!",
@@ -132,7 +155,7 @@ document.getElementById("messageLine").innerText = greetings[Math.floor(Math.ran
 function openDrawPage() { document.getElementById('page-home').classList.remove('active'); document.getElementById('page-draw').classList.add('active'); }
 function goHome() { document.getElementById('page-draw').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
 
-// CƠ CHẾ VUỐT VẬT LÝ CHO BOTTOM SHEET
+// CƠ CHẾ VUỐT
 const sheet = document.getElementById('bottomSheet');
 let startY;
 sheet.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
@@ -141,10 +164,7 @@ sheet.addEventListener('touchmove', (e) => {
     if (startY - currentY > 40) { sheet.classList.add('active'); } 
     else if (currentY - startY > 40) { sheet.classList.remove('active'); } 
 });
-
-document.querySelector('.drag-handle').addEventListener('click', () => {
-    sheet.classList.toggle('active');
-});
+document.querySelector('.drag-handle').addEventListener('click', () => { sheet.classList.toggle('active'); });
 
 </script>
 </body>
