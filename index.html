@@ -1,21 +1,251 @@
-/* HIỆU ỨNG HÀO QUANG NHỊP THỞ CHO NÚT MIỀN */
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ứng Dụng Xổ Số VIP</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body{ font-family:'Be Vietnam Pro', Arial, sans-serif; background:#f5f6f8; width:100vw; height:100vh; overflow:hidden; }
+.app{ display:flex; flex-direction:column; height:100%; }
+
+/* QUẢN LÝ TRANG */
+.page{ display:none; flex-direction:column; height:100%; }
+.page.active{ display:flex; }
+.content{ flex:1; overflow:auto; padding:16px; }
+
+/* HEADER TRANG CHỦ */
+.header{ background:#ffffff; padding:16px; text-align:center; border-bottom:1px solid #eeeeee; }
+.time-line{ font-size:15px; font-weight:700; color:#d90429; margin-bottom:4px; }
+.message-line{ font-size:13px; font-weight:600; color:#ff1744; }
+
+/* SUB HEADER (CÓ NÚT BACK) */
+.sub-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:#ffffff; border-bottom:1px solid #eeeeee; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.btn-back{ background:none; border:none; font-weight:700; font-size:15px; color:#d90429; cursor:pointer; display:flex; align-items:center; gap:5px; }
+.region-title { font-weight:700; color:#333; font-size:15px; }
+
+/* NÚT TRANG CHỦ */
+.button{ width:100%; max-width:380px; margin:0 auto 16px auto; min-height:54px; border-radius:12px; border:none; font-size:15px; font-weight:700; text-align:center; background:#ff1744; color:#ffffff; transition:transform 0.1s; display:block;}
+.button:active{ transform:scale(0.97); opacity:0.9; }
+
+/* NÚT CHỌN MIỀN & HIỆU ỨNG HÀO QUANG */
+.region-select{ display:flex; flex-direction:column; gap:16px; margin-top:10px; }
+.region-big-btn{ width:100%; height:64px; border-radius:14px; border:none; font-weight:700; font-size:16px; color:#ffffff; cursor:pointer; box-shadow:0 6px 14px rgba(0,0,0,0.15); transition:transform 0.1s; }
+.region-big-btn:active{ transform:translateY(3px); box-shadow:0 3px 8px rgba(0,0,0,0.2); }
+
 @keyframes glowingPulse {
     0% { box-shadow: 0 0 5px rgba(255, 23, 68, 0.4); }
     50% { box-shadow: 0 0 20px rgba(255, 23, 68, 0.8); }
     100% { box-shadow: 0 0 5px rgba(255, 23, 68, 0.4); }
 }
+.btn-bac{ background:linear-gradient(135deg,#ff1744,#d90429); animation: glowingPulse 2s infinite; border: 1px solid #ff4d6d; }
+.btn-trung{ background:linear-gradient(135deg,#ff9100,#ff6d00); }
+.btn-nam{ background:linear-gradient(135deg,#00b4db,#0083b0); }
 
-.btn-bac { 
-    background: linear-gradient(135deg, #ff1744, #d90429); 
-    animation: glowingPulse 2s infinite; /* Nút Miền Bắc luôn phát sáng rực rỡ */
-    border: 1px solid #ff4d6d;
+/* =======================================================
+   BỘ KHUÔN THẨM MỸ CAO CẤP: KHỐI GIẢI THƯỞNG
+   ======================================================= */
+.draw-status{ text-align:center; font-weight:800; font-size:16px; color:#d90429; margin-bottom:15px; padding:12px; background:#fff; border-radius:8px; border:1px solid #ffccbc; box-shadow: 0 2px 8px rgba(217,4,41,0.15); }
+
+#resultArea { background-color: #f8f9fa; padding: 10px; border-radius: 12px; }
+
+.prize-block { background: #ffffff; margin-bottom: 12px; padding: 14px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; transition: transform 0.2s ease; }
+
+.prize-block.dac-biet { background: linear-gradient(to bottom, #fff0f0, #ffffff); border: 1px solid #ff4d4f; box-shadow: 0 4px 15px rgba(255, 77, 79, 0.2); }
+
+.prize-title { font-weight: 800; color: #595959; font-size: 13px; text-transform: uppercase; text-align: center; margin-bottom: 10px; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+
+.prize-block.dac-biet .prize-title { color: #cf1322; font-size: 16px; border-bottom: 2px solid #ff4d4f; }
+
+.prize-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 14px; }
+
+.prize-row span { font-family: 'Courier New', Courier, monospace; font-size: 22px; font-weight: 900; color: #1f1f1f; letter-spacing: 2px; }
+
+.prize-block.dac-biet .prize-row span { font-size: 30px; color: #e53935; text-shadow: 1px 1px 2px rgba(229, 57, 53, 0.2); }
+
+/* =======================================================
+   BẢNG LÔ TỐP 100 SỐ BẬT NẨY
+   ======================================================= */
+.loto-title { margin-top:24px; font-weight:800; color:#333; text-align:center; margin-bottom:12px; font-size:16px; text-transform: uppercase;}
+.loto-chart{ display:grid; grid-template-columns:repeat(10, 1fr); gap:4px; }
+.loto-box{ background:#e0e0e0; color:#666; padding:8px 0; border-radius:6px; text-align:center; font-size:12px; font-weight:700; font-family:monospace; transition:all 0.3s ease; border: 1px solid transparent; }
+.loto-box.has-result{ background:linear-gradient(135deg, #ff1744, #d90429); color: #fff; box-shadow: 0 4px 10px rgba(255, 23, 68, 0.5); transform: scale(1.1); border: 1px solid #fff; z-index: 2; position: relative;}
+
+</style>
+</head>
+
+<body>
+<div class="app">
+
+    <div id="page-home" class="page active">
+        <div class="header">
+            <div class="time-line" id="timeLine"></div>
+            <div class="message-line">Hệ Thống Bọc Thép Đã Sẵn Sàng!</div>
+        </div>
+        <div class="content">
+            <button class="button" onclick="switchPage('page-region')">TRỰC TIẾP KẾT QUẢ XỔ SỐ</button>
+            <button class="button" style="background:#555;">LÔ TỐP (TÍCH HỢP BÊN TRONG)</button>
+        </div>
+    </div>
+
+    <div id="page-region" class="page">
+        <div class="sub-header">
+            <button class="btn-back" onclick="switchPage('page-home')">← Trở về</button>
+            <div class="region-title">CHỌN KHU VỰC</div>
+            <div style="width:60px;"></div>
+        </div>
+        <div class="content">
+            <div class="region-select">
+                <button class="region-big-btn btn-bac" onclick="openDraw('MB', 'MIỀN BẮC')">XỔ SỐ MIỀN BẮC</button>
+                <button class="region-big-btn btn-trung" onclick="openDraw('MT', 'MIỀN TRUNG')">XỔ SỐ MIỀN TRUNG</button>
+                <button class="region-big-btn btn-nam" onclick="openDraw('MN', 'MIỀN NAM')">XỔ SỐ MIỀN NAM</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-draw" class="page">
+        <div class="sub-header">
+            <button class="btn-back" onclick="switchPage('page-region')">← Quay lại</button>
+            <div class="region-title" id="currentRegionName">ĐANG TẢI...</div>
+            <div style="width:60px;"></div>
+        </div>
+        <div class="content" id="drawContent">
+            <div class="draw-status" id="drawStatus">CHỜ QUAY SỐ</div>
+            <div id="resultArea"></div>
+            
+            <div class="loto-title">BẢNG LÔ TỐP TẦN SUẤT</div>
+            <div class="loto-chart" id="lotoChart"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+if(window.Telegram && Telegram.WebApp){ Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+
+function updateTime(){
+    const now = new Date();
+    document.getElementById("timeLine").innerText = now.toLocaleDateString('vi-VN') + " - " + now.toLocaleTimeString('vi-VN');
+}
+setInterval(updateTime,1000); updateTime();
+
+function switchPage(pageId){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
 }
 
-/* HIỆU ỨNG BẬT NẨY CHO BẢNG LÔ TỐP */
-.loto-box.has-result { 
-    background: linear-gradient(135deg, #ff1744, #d90429); 
-    color: #fff; 
-    box-shadow: 0 4px 10px rgba(255, 23, 68, 0.6); 
-    transform: scale(1.1);
-    border: 1px solid #fff;
+let lotoFreq = Array(100).fill(0);
+let currentDrawTimer = null;
+
+function getPrizeConfig(region){
+    if(region === "MB"){
+        return [ ["Giải Nhất",1,5], ["Giải Nhì",2,5], ["Giải Ba",6,5], ["Giải Tư",4,4], ["Giải Năm",6,4], ["Giải Sáu",3,3], ["Giải Bảy",4,2], ["ĐẶC BIỆT",1,5] ];
+    } else {
+        return [ ["Giải 8",1,2], ["Giải 7",1,3], ["Giải 6",3,4], ["Giải 5",1,4], ["Giải 4",7,5], ["Giải 3",2,5], ["Giải 2",1,5], ["Giải 1",1,5], ["ĐẶC BIỆT",1,6] ];
+    }
 }
+
+function initLotoChart(){
+    const chart = document.getElementById('lotoChart');
+    chart.innerHTML = "";
+    for(let i=0; i<100; i++){
+        let d = document.createElement("div");
+        d.className = "loto-box";
+        d.id = "loto-" + i;
+        let numText = i < 10 ? "0" + i : i;
+        d.innerHTML = `${numText}<br><span style="font-size:10px;font-weight:normal;opacity:0.7">(0)</span>`;
+        chart.appendChild(d);
+    }
+}
+
+function updateLoto(num){
+    let l = parseInt(num.slice(-2));
+    lotoFreq[l]++;
+    
+    let box = document.getElementById("loto-" + l);
+    if(box){
+        box.classList.add("has-result");
+        let numText = l < 10 ? "0" + l : l;
+        box.innerHTML = `${numText}<br><span style="font-size:11px;">(${lotoFreq[l]})</span>`;
+    }
+}
+
+function randNum(len){
+    let max = Math.pow(10,len);
+    return String(Math.floor(Math.random()*max)).padStart(len,"0");
+}
+
+function openDraw(regionCode, regionName){
+    switchPage('page-draw');
+    document.getElementById('currentRegionName').innerText = regionName;
+    
+    if(currentDrawTimer) clearTimeout(currentDrawTimer);
+    document.getElementById('resultArea').innerHTML = "";
+    lotoFreq.fill(0);
+    initLotoChart();
+    
+    let statusEl = document.getElementById('drawStatus');
+    statusEl.innerText = "ĐANG QUAY SỐ...";
+    statusEl.style.color = "#d90429";
+    statusEl.style.borderColor = "#ff1744";
+
+    let cfg = getPrizeConfig(regionCode);
+    let prizeIndex = 0;
+    let resultArea = document.getElementById('resultArea');
+
+    function nextPrize(){
+        if(prizeIndex >= cfg.length){
+            statusEl.innerText = "ĐÃ QUAY XONG KẾT QUẢ!";
+            statusEl.style.color = "#2e7d32"; 
+            statusEl.style.borderColor = "#2e7d32";
+            return;
+        }
+        
+        let [title, count, len] = cfg[prizeIndex];
+        let block = document.createElement("div");
+        block.className = "prize-block";
+        
+        // NHẬN DIỆN GIẢI ĐẶC BIỆT ĐỂ BUNG HÀO QUANG ĐỎ RỰC
+        if(title === "ĐẶC BIỆT") {
+            block.classList.add("dac-biet");
+        }
+        
+        block.innerHTML = `<div class='prize-title'>${title}</div>`;
+        resultArea.appendChild(block);
+        
+        let rowDiv = document.createElement("div");
+        rowDiv.className = "prize-row";
+        block.appendChild(rowDiv);
+
+        let rowIndex = 0;
+        
+        function nextRow(){
+            if(rowIndex >= count){
+                prizeIndex++;
+                currentDrawTimer = setTimeout(nextPrize, 400);
+                return;
+            }
+            
+            let num = randNum(len);
+            let span = document.createElement("span");
+            span.textContent = num;
+            rowDiv.appendChild(span);
+            
+            updateLoto(num);
+            document.getElementById('drawContent').scrollTop = document.getElementById('drawContent').scrollHeight;
+
+            rowIndex++;
+            currentDrawTimer = setTimeout(nextRow, 250);
+        }
+        nextRow();
+    }
+    
+    currentDrawTimer = setTimeout(nextPrize, 800);
+}
+</script>
+</body>
+</html>
