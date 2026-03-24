@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ứng Dụng Xổ Số</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    font-family:'Be Vietnam Pro', Arial, sans-serif;
+    background:#f5f6f8;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+}
+
+.app{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+}
+
+/* HEADER */
+.header{
+    background:#ffffff;
+    padding:16px 18px;
+    text-align:center;
+    border-bottom:1px solid #eeeeee;
+}
+
+.time-line{
+    font-size:15px;
+    font-weight:600;
+    color:#d90429;
+    margin-bottom:6px;
+}
+
+.message-line{
+    font-size:14px;
+    font-weight:500;
+    color:#ff1744;
+}
+
+/* PAGE */
+.page{
+    display:none;
+    flex-direction:column;
+    height:100%;
+}
+
+.page.active{
+    display:flex;
+}
+
+.content{
+    flex:1;
+    overflow:auto;
+    padding:18px;
+}
+
+/* HOMEPAGE BUTTONS */
+.home{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    margin-top:24px;
+}
+
+.button{
+    width:100%;
+    max-width:380px;
+    margin:0 auto;
+
+    min-height:56px;
+    padding:10px 14px;
+
+    border-radius:14px;
+    border:none;
+
+    font-size:15px;
+    line-height:1.3;
+    font-weight:700;
+
+    text-align:center;
+    word-break:break-word;
+
+    background:#ff1744;
+    color:#ffffff;
+
+    transition:transform 0.1s ease, opacity 0.1s ease;
+}
+
+.button:active{
+    transform:scale(0.97);
+    opacity:0.85;
+}
+
+/* SUB HEADER */
+.sub-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 18px;
+    background:#ffffff;
+    border-bottom:1px solid #eeeeee;
+    font-weight:600;
+    color:#d90429;
+}
+
+.sub-header.center{
+    justify-content:center;
+    position:relative;
+}
+
+.sub-header.center .left,
+.sub-header.center .right{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+.sub-header.center .left{ left:18px; }
+.sub-header.center .right{ right:18px; }
+
+.button-outline{
+    min-height:44px;
+    padding:0 16px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
+    background:#ffffff;
+    border:2px solid #ff1744;
+    color:#ff1744;
+    transition:transform 0.1s ease, opacity 0.1s ease;
+}
+
+.button-outline:active{
+    transform:scale(0.95);
+    opacity:0.85;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="page active">
+    <div class="header">
+        <div class="time-line" id="timeLine"></div>
+        <div class="message-line" id="messageLine"></div>
+    </div>
+
+    <div class="content">
+        <div class="home">
+            <button class="button">TRỰC TIẾP KẾT QUẢ XỔ SỐ HÀNG NGÀY</button>
+            <button class="button">LÔ TỐP</button>
+            <button class="button">100 NGÀY KẾT QUẢ</button>
+            <button class="button">AI HƯỚNG DẪN [ĐANG PHÁT TRIỂN]</button>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script>
+// LỆNH KÍCH HOẠT TELEGRAM WEB APP KHI MỞ TRANG
+if(window.Telegram && Telegram.WebApp){
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+}
+
+const messages=[
+"Hôm nay vận đỏ, anh em vào xem!",
+"Chuẩn bị quay rồi, vào nhanh!",
+"Còn 1 phút nữa bắt đầu!",
+"Chúc anh em hôm nay trúng lớn!",
+"Sẵn sàng chưa? Chuẩn bị mở thưởng!"
+];
+
+function updateTime(){
+    const now=new Date();
+    const days=["Chủ Nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"];
+    const day=days[now.getDay()];
+    const dd=String(now.getDate()).padStart(2,'0');
+    const mm=String(now.getMonth()+1).padStart(2,'0');
+    const yyyy=now.getFullYear();
+    const hh=String(now.getHours()).padStart(2,'0');
+    const mi=String(now.getMinutes()).padStart(2,'0');
+    const ss=String(now.getSeconds()).padStart(2,'0');
+    document.getElementById("timeLine").innerText=
+        `${day} - ${dd}/${mm}/${yyyy} - ${hh}:${mi}:${ss}`;
+}
+setInterval(updateTime,1000);
+updateTime();
+
+document.getElementById("messageLine").innerText=
+messages[Math.floor(Math.random()*messages.length)];
+</script>
+
+</body>
+</html>
