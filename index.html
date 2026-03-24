@@ -1,120 +1,18 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Xổ Số Thần Mèo - Core Engine</title>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
-
-<style>
-/* =========================================
-   [MÃ ĐỊNH DANH: CSS-BASE] Reset & Khung App
-   ========================================= */
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body { font-family:'Be Vietnam Pro', Arial, sans-serif; background:#f2f3f5; min-height:100vh; display:flex; justify-content:center; }
-.app { width:100%; max-width:420px; min-height:100vh; padding:16px; display:flex; flex-direction:column; position:relative; overflow:hidden;}
-.page { display:none; flex-direction:column; flex:1; }
-.page.active { display:flex; }
-
-/* =========================================
-   [MÃ ĐỊNH DANH: CSS-HOME] Giao Diện Trang Chủ
-   ========================================= */
-.header { text-align:center; margin-bottom:24px; background:#fff; padding:16px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
-.time-line { font-size:15px; font-weight:800; color:#d90429; margin-bottom:6px; }
-.message-line { font-size:14px; font-weight:600; color:#ff1744; }
-.button-group { display:flex; flex-direction:column; gap:16px; }
-.button { width:100%; min-height:56px; padding:10px 14px; border:none; border-radius:14px; font-size:15px; font-weight:800; background:linear-gradient(135deg, #ff1744, #d90429); color:#ffffff; box-shadow:0 4px 10px rgba(217,4,41,0.2); transition:transform 0.1s; }
-.button:active { transform:scale(0.97); opacity:0.9; }
-
-/* =========================================
-   [MÃ ĐỊNH DANH: CSS-DRAW] Lưới Xổ Số Miền Bắc 27 Dòng
-   ========================================= */
-.mb-result { background:#fff; padding:12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.06); margin-bottom:16px; }
-.prize-row { display:grid; gap:8px; margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #eee; }
-.prize-row:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-
-/* Công thức Grid độc quyền (Không bao giờ vỡ khung) */
-.grid-1 { grid-template-columns: 1fr; }
-.grid-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-4 { grid-template-columns: repeat(4, 1fr); }
-
-/* Định dạng con số & Đuôi Đỏ */
-.num-box { font-variant-numeric: tabular-nums; font-weight: 900; font-size: 20px; text-align: center; color: #111; letter-spacing: 1px; }
-.num-box.db { font-size: 28px; color: #d90429; }
-.last-two { color: #ff1744; text-shadow: 0 0 2px rgba(255,23,68,0.2); }
-
-/* Hiệu ứng Lồng quay DB */
-.db-rolling-strip { display:none; font-size:28px; font-weight:900; color:#888; text-align:center; letter-spacing:4px; animation: pulse 0.5s infinite alternate; }
-@keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
-
-/* =========================================
-   [MÃ ĐỊNH DANH: CSS-STATS] Bottom Sheet Thống Kê
-   ========================================= */
-.bottom-sheet { position:absolute; bottom:0; left:0; width:100%; background:#fff; border-radius:24px 24px 0 0; box-shadow:0 -5px 20px rgba(0,0,0,0.15); transition:transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index:100; display:flex; flex-direction:column; }
-.bottom-sheet.collapsed { transform:translateY(85%); } /* Chỉ hở ra phần vuốt */
-.drag-handle { width:40px; height:5px; background:#ddd; border-radius:10px; margin:12px auto; }
-.stats-header { display:grid; grid-template-columns:repeat(7, 1fr); text-align:center; font-weight:800; font-size:12px; color:#555; padding:10px; background:#f9f9f9; border-bottom:1px solid #eee; }
-.sheet-content { height: 400px; overflow-y:auto; padding:10px; }
-</style>
-</head>
-
-<body>
-<div class="app">
-
-    <div id="page-home" class="page active">
-        <div class="header">
-            <div class="time-line" id="timeLine">ĐANG TẢI GIỜ...</div>
-            <div class="message-line" id="messageLine">SẴN SÀNG QUAY THƯỞNG!</div>
-        </div>
-        <div class="button-group">
-            <button class="button" onclick="openDrawPage()">TRỰC TIẾP KẾT QUẢ XỔ SỐ</button>
-            <button class="button" style="background:#333;">LỊCH SỬ THỐNG KÊ</button>
-        </div>
-    </div>
-
-    <div id="page-draw" class="page">
-        <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
-            <button onclick="goHome()" style="border:none; background:none; color:#d90429; font-weight:800;">← TRỞ VỀ</button>
-            <strong style="color:#333;">XỔ SỐ MIỀN BẮC</strong>
-            <div style="width:50px;"></div>
-        </div>
-
-        <div class="mb-result" id="result-board">
-            <div class="db-rolling-strip" id="db-rolling">0-0-0-0-0</div>
-            <div class="prize-row grid-1"><div class="num-box db" id="prize-db">-----</div></div>
-
-            <div class="prize-row grid-1"><div class="num-box" id="prize-g1-1">-----</div></div>
-            <div class="prize-row grid-2"><div class="num-box">-----</div><div class="num-box">-----</div></div>
-            <div class="prize-row grid-3"><div class="num-box">-----</div><div class="num-box">-----</div><div class="num-box">-----</div><div class="num-box">-----</div><div class="num-box">-----</div><div class="num-box">-----</div></div>
-            <div class="prize-row grid-4"><div class="num-box">----</div><div class="num-box">----</div><div class="num-box">----</div><div class="num-box">----</div></div>
-            <div class="prize-row grid-3"><div class="num-box">----</div><div class="num-box">----</div><div class="num-box">----</div><div class="num-box">----</div><div class="num-box">----</div><div class="num-box">----</div></div>
-            <div class="prize-row grid-3"><div class="num-box">---</div><div class="num-box">---</div><div class="num-box">---</div></div>
-            <div class="prize-row grid-4"><div class="num-box">--</div><div class="num-box">--</div><div class="num-box">--</div><div class="num-box">--</div></div>
-        </div>
-
-        <div class="bottom-sheet collapsed" id="bottomSheet">
-            <div class="drag-handle"></div>
-            <div style="text-align:center; font-weight:900; color:#d90429; margin-bottom:8px;">VUỐT ĐỂ XEM THỐNG KÊ ĐẶC BIỆT</div>
-            <div class="stats-header"><div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div></div>
-            <div class="sheet-content">
-                <div style="text-align:center; padding:20px; color:#888; font-weight:600;">DỮ LIỆU ĐANG CẬP NHẬT...</div>
-            </div>
-        </div>
-    </div>
-
-</div>
-
 <script>
 /* =========================================
-   [MÃ ĐỊNH DANH: JS-CORE] Logic Cơ Bản
+   [MÃ ĐỊNH DANH: JS-CORE] Logic Khởi Tạo & Giao Diện
    ========================================= */
 if(window.Telegram && Telegram.WebApp){ Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
 
-function openDrawPage() { document.getElementById('page-home').classList.remove('active'); document.getElementById('page-draw').classList.add('active'); }
-function goHome() { document.getElementById('page-draw').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
+function openDrawPage() { 
+    document.getElementById('page-home').classList.remove('active'); 
+    document.getElementById('page-draw').classList.add('active'); 
+    if(!isDrawing) startDrawEngine(); // Tự động chạy máy khi mở trang
+}
+function goHome() { 
+    document.getElementById('page-draw').classList.remove('active'); 
+    document.getElementById('page-home').classList.add('active'); 
+}
 
 function updateTime(){
     const now=new Date();
@@ -124,16 +22,122 @@ function updateTime(){
 setInterval(updateTime,1000); updateTime();
 
 /* =========================================
-   [MÃ ĐỊNH DANH: JS-SWIPE] Logic Vuốt Bottom Sheet
+   [MÃ ĐỊNH DANH: JS-SWIPE] Bottom Sheet (Thống Kê)
    ========================================= */
 const sheet = document.getElementById('bottomSheet');
 let startY;
 sheet.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
 sheet.addEventListener('touchmove', (e) => {
     let currentY = e.touches[0].clientY;
-    if (startY - currentY > 50) { sheet.classList.remove('collapsed'); } // Vuốt lên
-    else if (currentY - startY > 50) { sheet.classList.add('collapsed'); } // Vuốt xuống
+    if (startY - currentY > 50) { sheet.classList.remove('collapsed'); } 
+    else if (currentY - startY > 50) { sheet.classList.add('collapsed'); } 
 });
+
+/* =========================================
+   [MÃ ĐỊNH DANH: JS-ENGINE] CỖ MÁY TRẠNG THÁI (DRAW ENGINE)
+   ========================================= */
+// Cấu trúc chuẩn 27 giải Miền Bắc (Tên, Số lượng ô, Độ dài số, Cột Grid)
+const MB_CONFIG = [
+    { name: "G1", count: 1, len: 5, grid: 1 },
+    { name: "G2", count: 2, len: 5, grid: 2 },
+    { name: "G3", count: 6, len: 5, grid: 3 },
+    { name: "G4", count: 4, len: 4, grid: 4 },
+    { name: "G5", count: 6, len: 4, grid: 3 },
+    { name: "G6", count: 3, len: 3, grid: 3 },
+    { name: "G7", count: 4, len: 2, grid: 4 }
+];
+
+let isDrawing = false;
+let drawTimer = null;
+
+// Hàm sinh số bọc thép & tự động nhuộm Đỏ 2 số cuối
+function generateNumberHTML(len, isSpecial = false) {
+    let max = Math.pow(10, len);
+    let numStr = String(Math.floor(Math.random() * max)).padStart(len, "0");
+    
+    // Nếu là Đặc biệt hoặc G7 (2 số) -> Nguyên cục màu đỏ
+    if (isSpecial || len === 2) return numStr; 
+    
+    // Nhuộm đỏ 2 số đuôi lô
+    let head = numStr.slice(0, -2);
+    let tail = numStr.slice(-2);
+    return `${head}<span class="last-two">${tail}</span>`;
+}
+
+// Hàm dọn dẹp và xây lại bàn cờ 27 ô trước khi quay
+function buildBoard() {
+    const board = document.getElementById('result-board');
+    let html = `
+        <div class="db-rolling-strip" id="db-rolling" style="display:none;">0-0-0-0-0</div>
+        <div class="prize-row grid-1"><div class="num-box db" id="prize-db">-----</div></div>
+    `;
+    MB_CONFIG.forEach(g => {
+        html += `<div class="prize-row grid-${g.grid}">`;
+        for(let i=0; i<g.count; i++) {
+            html += `<div class="num-box" id="val-${g.name}-${i}">${"-".repeat(g.len)}</div>`;
+        }
+        html += `</div>`;
+    });
+    board.innerHTML = html;
+}
+
+// Cỗ máy chính thức nhả đạn
+function startDrawEngine() {
+    isDrawing = true;
+    buildBoard(); // Xóa bài cũ, chia lại bài mới
+    
+    let currentGroup = 0; // Bắt đầu từ G1
+    let currentRow = 0;
+    
+    // Hàm đệ quy nhả từ G1 đến G7
+    function drawNext() {
+        if (currentGroup >= MB_CONFIG.length) {
+            // Xong G7 -> Kích hoạt chế độ Hồi Hộp cho Đặc Biệt
+            drawSpecialPrize();
+            return;
+        }
+        
+        let g = MB_CONFIG[currentGroup];
+        let el = document.getElementById(`val-${g.name}-${currentRow}`);
+        
+        // Nhả số có đuôi đỏ
+        el.innerHTML = generateNumberHTML(g.len);
+        
+        currentRow++;
+        if (currentRow >= g.count) {
+            currentGroup++; // Nhảy sang giải tiếp theo
+            currentRow = 0;
+            drawTimer = setTimeout(drawNext, 600); // Đợi 0.6s để qua giải mới
+        } else {
+            drawTimer = setTimeout(drawNext, 250); // Đợi 0.25s nhả số tiếp theo trong cùng giải
+        }
+    }
+    
+    // Bắt đầu nhả đạn sau 1 giây
+    drawTimer = setTimeout(drawNext, 1000);
+}
+
+// Logic hồi hộp cho Giải Đặc Biệt
+function drawSpecialPrize() {
+    const rollingStrip = document.getElementById('db-rolling');
+    const dbBox = document.getElementById('prize-db');
+    
+    // 1. Giấu ô ĐB, Hiện dải nháy nháy
+    dbBox.style.display = 'none';
+    rollingStrip.style.display = 'block';
+    
+    let rollCount = 0;
+    let rollInt = setInterval(() => {
+        rollingStrip.innerText = Math.floor(Math.random()*100000).toString().padStart(5, '0').split('').join('-');
+        rollCount++;
+        if(rollCount > 15) { // Nháy 15 lần (~1.5s)
+            clearInterval(rollInt);
+            // 2. Tắt dải nháy, nổ kết quả ĐB đỏ rực
+            rollingStrip.style.display = 'none';
+            dbBox.style.display = 'block';
+            dbBox.innerHTML = generateNumberHTML(5, true); // true = Full Đỏ
+            isDrawing = false;
+        }
+    }, 100);
+}
 </script>
-</body>
-</html>
