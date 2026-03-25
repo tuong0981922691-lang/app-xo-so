@@ -1,259 +1,270 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xổ Số Bố Cục Chuẩn - Kính Mờ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
-        /* Nền Gradient Kính Mờ */
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #e94560);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            color: #fff;
-        }
-        @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>XSMB - Bố Cục Chuẩn Tâm Điểm</title>
 
-        /* KHUNG MOBILE BỌC THÉP */
-        .app-container {
-            width: 100%;
-            max-width: 420px;
-            padding: 15px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+  <style>
+    /* RESET & BASE */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f4f8; /* Nền nhạt sạch sẽ */
+      display: flex;
+      justify-content: center;
+      padding: 15px 10px;
+    }
 
-        /* HEADER */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
-        .header-title { text-align: center; font-size: 18px; font-weight: 900; letter-spacing: 1px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    /* KHUNG MOBILE BỌC THÉP */
+    .app-container {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
 
-        /* BẢNG KẾT QUẢ THEO HÌNH BOSS GỬI */
-        .row {
-            display: flex;
-            align-items: stretch;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 0;
-        }
-        .row:last-child { border-bottom: none; }
-        
-        .prize-name {
-            flex: 0 0 45px; /* Ép cứng chiều rộng tên giải */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.8);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            margin-right: 8px;
-        }
+    /* HEADER */
+    h2 { text-align: center; font-size: 18px; font-weight: 900; color: #111; margin-bottom: 4px; }
+    p.date { text-align: center; font-size: 13px; color: #666; font-weight: 600; }
 
-        /* LƯỚI GRID ĐÚNG CHUẨN HÌNH ẢNH */
-        .grid-nums {
-            flex: 1;
-            display: grid;
-            gap: 6px;
-        }
-        /* Phân bổ số cột */
-        .g-1 { grid-template-columns: 1fr; }
-        .g-2 { grid-template-columns: repeat(2, 1fr); }
-        .g-3 { grid-template-columns: repeat(3, 1fr); }
-        .g-4 { grid-template-columns: repeat(4, 1fr); }
+    /* NÚT QUAY SỐ */
+    .btn-spin {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(192, 57, 43, 0.3);
+    }
+    .btn-spin:active { transform: scale(0.98); }
 
-        /* Ô SỐ KÍNH MỜ */
-        .num-cell {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            padding: 8px 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Courier New', monospace;
-            font-size: 15px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            color: #fff;
-            transition: all 0.1s ease-in-out;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+    /* BẢNG KẾT QUẢ */
+    .table {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
 
-        /* ÉP FONT NHỎ CHO GIẢI 7 ĐỂ VỪA 4 CỘT TRÊN IPHONE */
-        .g-4 .num-cell { font-size: 14px; letter-spacing: 0px; }
+    .row {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid #eee;
+    }
+    .row:last-child { border-bottom: none; }
 
-        /* HÀNG ĐẶC BIỆT DƯỚI CÙNG */
-        .row-db { margin-top: 5px; border: 1px solid rgba(255,77,77,0.4); border-radius: 8px; background: rgba(255, 0, 0, 0.05); }
-        .row-db .prize-name { color: #ff4d4d; border-right-color: rgba(255,77,77,0.3); }
-        .row-db .num-cell { 
-            font-size: 24px; letter-spacing: 4px; padding: 12px; 
-            color: #ff4d4d; border-color: rgba(255,77,77,0.5); 
-            background: rgba(255, 255, 255, 0.8);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
+    /* CỘT TÊN GIẢI */
+    .prize-name {
+      flex: 0 0 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+      color: #555;
+      background: #fdfdfd;
+      border-right: 1px solid #eee;
+    }
 
-        /* HIỆU ỨNG ĐÈN CHẠY TỪNG Ô */
-        .active-light {
-            background: rgba(255, 215, 0, 0.9) !important; /* Vàng chói */
-            color: #000 !important;
-            border-color: #ffd700 !important;
-            transform: scale(1.08);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8), inset 0 0 5px #fff;
-            z-index: 10;
-        }
+    /* CỘT CHỨA SỐ */
+    .numbers-wrapper {
+      flex: 1;
+      padding: 8px;
+      display: grid; /* BÍ KÍP Ở ĐÂY: Dùng grid để chia đều */
+      gap: 8px;
+    }
 
-        /* NÚT BẤM */
-        .btn-action {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 900;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        .btn-stop { background: rgba(233, 69, 96, 0.8); border-color: #e94560; }
-    </style>
+    /* CĂN GIỮA VÀ CHIA CỘT CHUẨN NHƯ ẢNH BOSS GỬI */
+    /* G1 & ĐB: 1 số -> Nằm chính giữa */
+    .g-center { 
+      display: flex; 
+      justify-content: center; /* Ép vào giữa */
+      align-items: center; 
+    }
+    /* G2, G4: 2 cột chia đều */
+    .g-2 { grid-template-columns: repeat(2, 1fr); }
+    /* G3, G5, G6: 3 cột chia đều */
+    .g-3 { grid-template-columns: repeat(3, 1fr); }
+    /* G7: 4 cột chia đều */
+    .g-4 { grid-template-columns: repeat(4, 1fr); }
+
+
+    /* Ô CHỨA 1 DÃY SỐ (VD: 12345) */
+    .num-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2px; /* Khoảng cách giữa các chữ số */
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    /* TỪNG CHỮ SỐ LẺ (Để tạo hiệu ứng quay) */
+    .digit {
+      width: 14px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+      font-weight: 900;
+      text-align: center;
+      color: #111;
+      line-height: 1;
+    }
+
+    /* ĐẶC BIỆT DƯỚI CÙNG */
+    .row-db { background: #fff5f5; border: 1px solid #ffcccc; }
+    .row-db .prize-name { color: #e74c3c; border-right-color: #ffcccc; background: transparent; }
+    .row-db .num-group { border-color: #ff9999; padding: 8px 12px; }
+    .row-db .digit { color: #e74c3c; font-size: 24px; width: 20px; }
+
+    /* MOBILE TINH CHỈNH */
+    @media (max-width: 360px) {
+      .prize-name { flex: 0 0 40px; font-size: 11px; }
+      .digit { font-size: 13px; width: 11px; }
+      .row-db .digit { font-size: 20px; width: 16px; }
+    }
+  </style>
 </head>
+
 <body>
 
 <div class="app-container">
-    <div class="glass-panel" style="padding: 12px;">
-        <h1 class="header-title">MIỀN BẮC LIVE</h1>
+  <h2>KẾT QUẢ XỔ SỐ MIỀN BẮC</h2>
+  <p class="date">Thứ Tư - 25/03/2026</p>
+
+  <button class="btn-spin" onclick="startSpin()">▶ BẮT ĐẦU QUAY SỐ</button>
+
+  <div class="table">
+    <div class="row">
+      <div class="prize-name">G1</div>
+      <div class="numbers-wrapper g-center" id="g1"></div>
     </div>
-
-    <div class="glass-panel" style="padding: 10px;">
-        
-        <div class="row">
-            <div class="prize-name">G1</div>
-            <div class="grid-nums g-1"><div class="num-cell target-cell">12345</div></div>
-        </div>
-
-        <div class="row">
-            <div class="prize-name">G2</div>
-            <div class="grid-nums g-2">
-                <div class="num-cell target-cell">23456</div>
-                <div class="num-cell target-cell">34567</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="prize-name">G3</div>
-            <div class="grid-nums g-3">
-                <div class="num-cell target-cell">45678</div>
-                <div class="num-cell target-cell">56789</div>
-                <div class="num-cell target-cell">67890</div>
-                <div class="num-cell target-cell">78901</div>
-                <div class="num-cell target-cell">89012</div>
-                <div class="num-cell target-cell">90123</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="prize-name">G4</div>
-            <div class="grid-nums g-2">
-                <div class="num-cell target-cell">1122</div>
-                <div class="num-cell target-cell">3344</div>
-                <div class="num-cell target-cell">5566</div>
-                <div class="num-cell target-cell">7788</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="prize-name">G5</div>
-            <div class="grid-nums g-3">
-                <div class="num-cell target-cell">1234</div>
-                <div class="num-cell target-cell">2345</div>
-                <div class="num-cell target-cell">3456</div>
-                <div class="num-cell target-cell">4567</div>
-                <div class="num-cell target-cell">5678</div>
-                <div class="num-cell target-cell">6789</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="prize-name">G6</div>
-            <div class="grid-nums g-3">
-                <div class="num-cell target-cell">123</div>
-                <div class="num-cell target-cell">456</div>
-                <div class="num-cell target-cell">789</div>
-            </div>
-        </div>
-
-        <div class="row" style="border-bottom: none;">
-            <div class="prize-name">G7</div>
-            <div class="grid-nums g-4">
-                <div class="num-cell target-cell">12</div>
-                <div class="num-cell target-cell">34</div>
-                <div class="num-cell target-cell">56</div>
-                <div class="num-cell target-cell">78</div>
-            </div>
-        </div>
-
-        <div class="row row-db">
-            <div class="prize-name">ĐB</div>
-            <div class="grid-nums g-1"><div class="num-cell target-cell">99999</div></div>
-        </div>
-
+    <div class="row">
+      <div class="prize-name">G2</div>
+      <div class="numbers-wrapper g-2" id="g2"></div>
     </div>
-
-    <button class="btn-action" id="btnToggle" onclick="toggleScan()">▶ BẮT ĐẦU QUAY SỐ</button>
+    <div class="row">
+      <div class="prize-name">G3</div>
+      <div class="numbers-wrapper g-3" id="g3"></div>
+    </div>
+    <div class="row">
+      <div class="prize-name">G4</div>
+      <div class="numbers-wrapper g-2" id="g4"></div>
+    </div>
+    <div class="row">
+      <div class="prize-name">G5</div>
+      <div class="numbers-wrapper g-3" id="g5"></div>
+    </div>
+    <div class="row">
+      <div class="prize-name">G6</div>
+      <div class="numbers-wrapper g-3" id="g6"></div>
+    </div>
+    <div class="row">
+      <div class="prize-name">G7</div>
+      <div class="numbers-wrapper g-4" id="g7"></div>
+    </div>
+    <div class="row row-db">
+      <div class="prize-name">ĐB</div>
+      <div class="numbers-wrapper g-center" id="db"></div>
+    </div>
+  </div>
 </div>
 
 <script>
-    const cells = document.querySelectorAll('.target-cell');
-    let currentIndex = 0;
-    let scanInterval = null;
-    let isScanning = false;
+  // Dữ liệu mẫu (Sau này cắm API vào đây)
+  const data = {
+    g1: ["34195"],
+    g2: ["61204", "47839"],
+    g3: ["90153", "28476", "53821", "74690", "16348", "39072"],
+    g4: ["4827", "3160", "9543", "7208"],
+    g5: ["1374", "6089", "4251", "8736", "2940", "5617"],
+    g6: ["392", "748", "165"],
+    g7: ["83", "47", "29", "61"],
+    db: ["82567"]
+  };
 
-    function toggleScan() {
-        const btn = document.getElementById('btnToggle');
+  // 1. TẠO KHUNG TRỐNG SẴN SÀNG QUAY
+  function createEmptyLayout(id, arr) {
+    const box = document.getElementById(id);
+    box.innerHTML = "";
+
+    arr.forEach(numStr => {
+      const group = document.createElement("div");
+      group.className = "num-group";
+
+      // Tạo từng chữ số (digit)
+      for(let i = 0; i < numStr.length; i++){
+        const d = document.createElement("span");
+        d.className = "digit";
+        d.innerText = "-"; // Trạng thái chờ
+        group.appendChild(d);
+      }
+      box.appendChild(group);
+    });
+  }
+
+  // Khởi tạo layout ban đầu
+  for(const key in data) { createEmptyLayout(key, data[key]); }
+
+  // 2. HIỆU ỨNG QUAY TỪNG CHỮ SỐ
+  function spinRow(id, arr) {
+    const box = document.getElementById(id);
+    const groups = box.children;
+
+    for(let g = 0; g < groups.length; g++){
+      const digits = groups[g].children;
+      const finalStr = arr[g];
+
+      for(let i = 0; i < digits.length; i++){
+        const el = digits[i];
         
-        if (!isScanning) {
-            isScanning = true;
-            btn.innerText = "⏸ DỪNG LẠI (CHỐT SỐ)";
-            btn.classList.add('btn-stop');
-            
-            cells.forEach(c => c.classList.remove('active-light'));
+        // Cài đặt thời gian cho từng chữ số rụng xuống
+        const spinStart = 100 + (g * 150) + (i * 80);
+        const spinDuration = 500; // Thời gian quay của 1 số
 
-            scanInterval = setInterval(() => {
-                if(currentIndex > 0) cells[currentIndex - 1].classList.remove('active-light');
-                else if (currentIndex === 0 && cells.length > 0) cells[cells.length - 1].classList.remove('active-light');
+        setTimeout(() => {
+          // Cho số chạy loạn xạ
+          const interval = setInterval(() => {
+            el.innerText = Math.floor(Math.random() * 10);
+          }, 40);
 
-                cells[currentIndex].classList.add('active-light');
-
-                currentIndex++;
-                if(currentIndex >= cells.length) currentIndex = 0;
-            }, 100); // Đã tăng tốc lên 100ms vì có tận 27 số
-
-        } else {
-            isScanning = false;
-            clearInterval(scanInterval);
-            btn.innerText = "▶ TIẾP TỤC QUAY";
-            btn.classList.remove('btn-stop');
-        }
+          // Chốt số cuối cùng
+          setTimeout(() => {
+            clearInterval(interval);
+            el.innerText = finalStr[i];
+            // Nếu là 2 số cuối thì bôi đỏ (Chấp hành Điều 8 Hiến Pháp)
+            if (i >= finalStr.length - 2) {
+                el.style.color = "#d90429";
+            }
+          }, spinDuration);
+        }, spinStart);
+      }
     }
+  }
+
+  // 3. KÍCH HOẠT QUAY THEO THỨ TỰ THỰC TẾ (Từ G1 -> G7 -> ĐB)
+  // (Tôi sửa lại chạy từ G1 -> ĐB để khách xem có cảm giác đi từ nhỏ đến lớn)
+  function startSpin() {
+    const order = ["g1","g2","g3","g4","g5","g6","g7","db"];
+    
+    order.forEach((key, index) => {
+      // Mỗi giải cách nhau 800ms
+      setTimeout(() => {
+        spinRow(key, data[key]);
+      }, index * 800);
+    });
+  }
 </script>
 
 </body>
