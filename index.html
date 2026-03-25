@@ -3,125 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xổ Số Miền Bắc Live - V15</title>
+    <title>Xổ Số Tuấn Đức - Bản Diễn Tối Thượng</title>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        /* [1] HIẾN PHÁP TỐI CAO - MOBILE FIRST 420PX */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
             --bg: #f2f4f7; --card: #ffffff; --text: #1a1a1a; --border: #eceef2;
-            --primary: #d90429; --primary-bg: #fff0f2;
+            --primary: #d90429; --primary-light: #fff0f2;
         }
-        body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); display: flex; justify-content: center; min-height: 100vh; }
-        .app { width: 100%; max-width: 420px; background: var(--card); display: flex; flex-direction: column; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        body { 
+            font-family: 'Be Vietnam Pro', sans-serif; 
+            background: #111; /* Nền ngoài cho cảm giác App chuyên nghiệp */
+            display: flex; justify-content: center; height: 100vh; overflow: hidden; 
+        }
+        .app-frame { 
+            width: 100%; max-width: 420px; height: 100vh; 
+            background: var(--bg); position: relative; overflow: hidden;
+        }
 
-        /* HEADER CHUẨN ĐÊM QUA */
-        .header { background: linear-gradient(135deg, #ff1744, #d90429); color: #fff; padding: 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 12px rgba(217,4,41,0.2); }
-        .header h1 { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
-        .header p { font-size: 13px; opacity: 0.9; margin-top: 5px; font-weight: 600; }
+        /* [2] BẢNG KẾT QUẢ XỔ SỐ (CENTERED LAYOUT) */
+        .main-board {
+            height: 100%; padding: 15px; padding-top: 20px;
+            overflow-y: auto; padding-bottom: 200px;
+        }
+        .header-app { text-align: center; margin-bottom: 15px; }
+        .header-app h1 { font-size: 1.2rem; font-weight: 900; color: var(--primary); text-transform: uppercase; }
+        .header-app p { font-size: 0.8rem; color: #666; font-weight: 700; margin-top: 4px; }
 
-        .btn-spin { margin: 15px; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 15px rgba(217,4,41,0.3); transition: 0.2s; }
-        .btn-spin:active { transform: scale(0.97); }
-
-        /* BẢNG KẾT QUẢ TÂM ĐIỂM */
-        .board { padding: 10px; flex: 1; }
-        .row { display: flex; border-bottom: 1px solid var(--border); padding: 8px 0; }
+        .result-table { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; }
+        .row { display: flex; border-bottom: 1px solid var(--border); }
         .row:last-child { border-bottom: none; }
-        .lbl { flex: 0 0 50px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #666; background: #fafafa; border-right: 1px solid var(--border); margin-right: 8px; }
+        .lbl { flex: 0 0 50px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: #555; background: #fafafa; border-right: 1px solid var(--border); }
+        .nums { flex: 1; padding: 10px; display: grid; gap: 8px; align-items: center; }
         
-        .nums-grid { flex: 1; display: grid; gap: 8px; }
+        /* Layout lưới chuẩn tâm điểm */
         .g-cen { display: flex; justify-content: center; }
         .g-2 { grid-template-columns: repeat(2, 1fr); }
         .g-3 { grid-template-columns: repeat(3, 1fr); }
         .g-4 { grid-template-columns: repeat(4, 1fr); }
 
-        /* Ô SỐ CHUẨN ĐÊM QUA */
-        .n-group { display: flex; justify-content: center; align-items: center; gap: 2px; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
-        .digit { width: 14px; text-align: center; font-family: 'Courier New', monospace; font-size: 18px; font-weight: 900; color: #111; }
+        code.n { 
+            display: inline-flex; justify-content: center; align-items: center;
+            background: #fff; border: 1px solid #ddd; border-radius: 8px;
+            padding: 6px 0; font-family: 'Courier New', monospace; font-size: 16px; font-weight: 800; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+        .red-tail { color: var(--primary); font-weight: 900; }
         
-        /* ĐẶC BIỆT CHỐT HẠ */
-        .row-db { background: var(--primary-bg); border: 1.5px solid #ffb3c1; border-radius: 10px; margin-top: 10px; }
-        .row-db .lbl { color: var(--primary); background: transparent; border-right-color: #ffb3c1; }
-        .row-db .n-group { border-color: #ffb3c1; padding: 10px; }
-        .row-db .digit { color: var(--primary); font-size: 26px; width: 20px; }
-        .red-tail { color: var(--primary); }
+        .row-db { background: var(--primary-light); }
+        .row-db .lbl { color: var(--primary); border-right-color: #ffb3c1; background: transparent; }
+        .row-db code.n { font-size: 24px; color: var(--primary); border-color: #ffb3c1; padding: 10px 0; width: 100%; }
+        .row-db .red-tail { color: inherit; }
 
-        /* ĐÈN CHẠY LIVE */
-        .running { background: #ffeaa7 !important; transform: scale(1.03); border-color: #fdcb6e !important; }
+        /* [3] TẤM MÀN THỐNG KÊ (BOTTOM SHEET) */
+        .bottom-sheet {
+            position: absolute; left: 0; right: 0; bottom: 0;
+            height: 85vh; background: var(--card);
+            border-top-left-radius: 24px; border-top-right-radius: 24px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+            transform: translateY(75vh); /* Chỉ hở cái thanh nắm và tiêu đề */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+        .bottom-sheet.active { transform: translateY(15vh); }
+
+        /* Handle và Tiêu đề Đỏ */
+        .drag-handle-area { padding: 15px 10px; text-align: center; cursor: pointer; border-bottom: 1px solid var(--border); }
+        .handle-bar { width: 40px; height: 5px; background: #ccc; border-radius: 10px; margin: 0 auto 12px; }
+        .sheet-title { color: var(--primary); font-size: 16px; font-weight: 900; text-transform: uppercase; }
+
+        /* HÀNG THỨ 2 -> CHỦ NHẬT (LINH HỒN CỦA BOSS) */
+        .day-row {
+            display: flex; justify-content: space-between; padding: 15px;
+            background: #fff; border-bottom: 1px solid var(--border);
+        }
+        .day-item {
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; background: var(--bg); font-size: 12px; font-weight: 800;
+            color: #555; border: 1px solid var(--border); cursor: pointer; transition: 0.2s;
+        }
+        .day-item.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 10px rgba(217,4,41,0.3); }
+
+        /* Nội dung thống kê */
+        .sheet-content { padding: 20px; overflow-y: auto; height: calc(100% - 130px); background: #fafafa; }
+        .stat-card { background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
+        .stat-card h4 { font-size: 14px; color: var(--primary); margin-bottom: 8px; font-weight: 900; }
+        .stat-card p { font-size: 13px; color: #666; font-weight: 600; line-height: 1.5; }
+
     </style>
 </head>
 <body>
-<div class="app">
-    <div class="header">
-        <h1>KẾT QUẢ XỔ SỐ MIỀN BẮC</h1>
-        <p id="dateDisplay">Hà Nội - Thứ Tư - 25/03/2026</p>
-    </div>
-    
-    <button class="btn-spin" onclick="startBroadcasting()">▶ BẮT ĐẦU QUAY THƯỞNG</button>
 
-    <div class="board" id="mainBoard">
+<div class="app-frame">
+    
+    <div class="main-board">
+        <div class="header-app">
+            <h1>Xổ Số Miền Bắc Live</h1>
+            <p>Hà Nội — Thứ Tư — 25/03/2026</p>
         </div>
+
+        <div class="result-table">
+            <div class="row row-db">
+                <div class="lbl">ĐB</div>
+                <div class="nums g-cen"><code class="n">82567</code></div>
+            </div>
+            <div class="row">
+                <div class="lbl">G1</div>
+                <div class="nums g-cen"><code class="n">341<span>95</span></code></div>
+            </div>
+            <div class="row">
+                <div class="lbl">G2</div>
+                <div class="nums g-2">
+                    <code class="n">612<span>04</span></code>
+                    <code class="n">478<span>39</span></code>
+                </div>
+            </div>
+            <div class="row">
+                <div class="lbl">G3</div>
+                <div class="nums g-3">
+                    <code class="n">90153</code><code class="n">28476</code><code class="n">53821</code>
+                    <code class="n">74690</code><code class="n">16348</code><code class="n">39072</code>
+                </div>
+            </div>
+            <div class="row">
+                <div class="lbl">G4</div>
+                <div class="nums g-2"><code class="n">4827</code><code class="n">3160</code><code class="n">9543</code><code class="n">7208</code></div>
+            </div>
+            <div class="row">
+                <div class="lbl">G7</div>
+                <div class="nums g-4"><code class="n">83</code><code class="n">47</code><code class="n">29</code><code class="n">61</code></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-sheet" id="statSheet">
+        <div class="drag-handle-area" onclick="toggleSheet()">
+            <div class="handle-bar"></div>
+            <div class="sheet-title">Thống kê Đặc biệt</div>
+        </div>
+
+        <div class="day-row">
+            <div class="day-item active">T2</div>
+            <div class="day-item">T3</div>
+            <div class="day-item">T4</div>
+            <div class="day-item">T5</div>
+            <div class="day-item">T6</div>
+            <div class="day-item">T7</div>
+            <div class="day-item">CN</div>
+        </div>
+
+        <div class="sheet-content">
+            <div class="stat-card">
+                <h4>Phân tích nhịp về</h4>
+                <p>Dữ liệu đặc biệt ngày hôm nay có dấu hiệu về lại đầu 8. Nhịp lô gan 25 ngày chưa nổ.</p>
+            </div>
+            <div class="stat-card">
+                <h4>Thống kê tần suất</h4>
+                <p>Cặp số 67-76 đang đứng đầu bảng tần suất xuất hiện trong 30 ngày qua.</p>
+            </div>
+            <div class="stat-card">
+                <h4>Lời khuyên từ AI</h4>
+                <p>Hãy chú trọng vào các dãy số có tổng chẵn cho kỳ quay thưởng tiếp theo.</p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    const structure = { g1:1, g2:2, g3:6, g4:4, g5:6, g6:3, g7:4, db:1 };
-    const mockData = {
-        g1:["34195"], g2:["61204","47839"], g3:["90153","28476","53821","74690","16348","39072"],
-        g4:["4827","3160","9543","7208"], g5:["1374","6089","4251","8736","2940","5617"],
-        g6:["392","748","165"], g7:["83","47","29","61"], db:["82567"]
-    };
-
-    function initBoard() {
-        const b = document.getElementById('mainBoard');
-        let h = '';
-        for (let k in structure) {
-            let gc = 'g-cen';
-            if(structure[k]===2||structure[k]===4) gc = 'g-2';
-            if(structure[k]===3||structure[k]===6) gc = 'g-3';
-            if(k==='g7') gc = 'g-4';
-            
-            let rowClass = k==='db' ? 'row row-db' : 'row';
-            let boxes = '';
-            for(let i=0; i<structure[k]; i++) {
-                let dots = k==='g7'?'--':(k==='g6'?'---':(k==='g4'||k==='g5'?'----':'-----'));
-                boxes += `<div class="n-group" id="${k}-${i}">${dots.split('').map(d=>`<span class="digit">${d}</span>`).join('')}</div>`;
-            }
-            h += `<div class="${rowClass}"><div class="lbl">${k.toUpperCase()}</div><div class="nums-grid ${gc}">${boxes}</div></div>`;
+    // 1. Logic đóng mở tấm màn
+    function toggleSheet() {
+        const sheet = document.getElementById('statSheet');
+        sheet.classList.toggle('active');
+        
+        // Haptic Feedback cho Telegram Web App
+        if(window.Telegram && Telegram.WebApp) {
+            Telegram.WebApp.HapticFeedback.impactOccurred('medium');
         }
-        b.innerHTML = h;
     }
 
-    function startBroadcasting() {
-        const order = ["g1","g2","g3","g4","g5","g6","g7","db"];
-        order.forEach((k, idx) => {
-            setTimeout(() => {
-                const groupCount = structure[k];
-                for(let i=0; i<groupCount; i++) {
-                    const target = document.getElementById(`${k}-${i}`);
-                    const finalVal = mockData[k][i];
-                    spinEffect(target, finalVal);
-                }
-            }, idx * 1200);
+    // 2. Logic chọn Thứ
+    const dayItems = document.querySelectorAll('.day-item');
+    dayItems.forEach(item => {
+        item.addEventListener('click', function() {
+            dayItems.forEach(d => d.classList.remove('active'));
+            this.classList.add('active');
         });
-    }
+    });
 
-    function spinEffect(el, val) {
-        el.classList.add('running');
-        const digits = el.querySelectorAll('.digit');
-        digits.forEach((d, i) => {
-            let count = 0;
-            const scroll = setInterval(() => {
-                d.innerText = Math.floor(Math.random()*10);
-                count++;
-                if(count > 10 + (i*5)) {
-                    clearInterval(scroll);
-                    d.innerText = val[i];
-                    if(i >= val.length-2) d.classList.add('red-tail');
-                    if(i === val.length-1) el.classList.remove('running');
-                }
-            }, 50);
-        });
+    // Telegram Auto Expand
+    if(window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
     }
-    initBoard();
 </script>
+
 </body>
 </html>
