@@ -3,18 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xổ Số Tuấn Đức - Bản Diễn Tối Thượng</title>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Xổ Số Tuấn Đức - Bản Diễn Tối Thượng V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         /* [1] HIẾN PHÁP TỐI CAO - MOBILE FIRST 420PX */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
-            --bg: #f2f4f7; --card: #ffffff; --text: #1a1a1a; --border: #eceef2;
-            --primary: #d90429; --primary-light: #fff0f2;
+            --bg: #f0f2f5; 
+            --card: #ffffff; 
+            --text: #1a1a1a; 
+            --border: #e4e6eb;
+            --primary: #d90429; 
+            --primary-glow: rgba(217, 4, 41, 0.4);
+            --primary-light: #fff0f2;
+            --btn-bg: #f5f7fa;
+            --btn-shadow: 3px 3px 6px #d9dce0, -3px -3px 6px #ffffff; /* Hiệu ứng nổi 3D */
+            --btn-inner: inset 1px 1px 2px rgba(255,255,255,0.8); /* Ánh điện viền trắng */
         }
         body { 
             font-family: 'Be Vietnam Pro', sans-serif; 
-            background: #111; /* Nền ngoài cho cảm giác App chuyên nghiệp */
+            background: #111; 
             display: flex; justify-content: center; height: 100vh; overflow: hidden; 
         }
         .app-frame { 
@@ -22,74 +30,134 @@
             background: var(--bg); position: relative; overflow: hidden;
         }
 
-        /* [2] BẢNG KẾT QUẢ XỔ SỐ (CENTERED LAYOUT) */
+        /* [2] BỐ CỤC CHÍNH */
         .main-board {
-            height: 100%; padding: 15px; padding-top: 20px;
+            height: 100%; padding: 12px; padding-top: 20px;
             overflow-y: auto; padding-bottom: 200px;
         }
         .header-app { text-align: center; margin-bottom: 15px; }
-        .header-app h1 { font-size: 1.2rem; font-weight: 900; color: var(--primary); text-transform: uppercase; }
-        .header-app p { font-size: 0.8rem; color: #666; font-weight: 700; margin-top: 4px; }
+        .header-app h1 { font-size: 1.3rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .header-app p { font-size: 0.85rem; color: #555; font-weight: 700; margin-top: 4px; }
 
-        .result-table { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; }
+        /* [3] BẢNG KẾT QUẢ - BỌC THÉP */
+        .result-table { 
+            background: var(--card); 
+            border-radius: 16px; 
+            border: 1px solid #fff; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06); 
+            overflow: hidden; 
+        }
         .row { display: flex; border-bottom: 1px solid var(--border); }
         .row:last-child { border-bottom: none; }
-        .lbl { flex: 0 0 50px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: #555; background: #fafafa; border-right: 1px solid var(--border); }
-        .nums { flex: 1; padding: 10px; display: grid; gap: 8px; align-items: center; }
         
-        /* Layout lưới chuẩn tâm điểm */
-        .g-cen { display: flex; justify-content: center; }
+        /* CỘT LABEL (G1 -> G7) VỚI HIỆU ỨNG NỔI 3D VÀ ÁNH ĐIỆN */
+        .lbl { 
+            flex: 0 0 55px; display: flex; align-items: center; justify-content: center; 
+            font-size: 12px; font-weight: 900; color: #666; 
+            background: var(--btn-bg); 
+            border-right: 1px solid var(--border);
+            /* Bịt vá: Thêm hiệu ứng nổi nhẹ cho cột dọc */
+            box-shadow: inset -2px 0 5px rgba(0,0,0,0.02);
+            position: relative;
+        }
+        
+        /* HIỆU ỨNG GLOW (SÁNG ĐÈN KHI QUAY THƯỞNG) */
+        .lbl.active-glow {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 15px var(--primary-glow), inset 2px 2px 5px rgba(255,255,255,0.4);
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            border-right: none;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 var(--primary-glow), inset 2px 2px 5px rgba(255,255,255,0.4); }
+            70% { box-shadow: 0 0 10px 5px transparent, inset 2px 2px 5px rgba(255,255,255,0.4); }
+            100% { box-shadow: 0 0 0 0 transparent, inset 2px 2px 5px rgba(255,255,255,0.4); }
+        }
+
+        /* KHU VỰC CHỨA SỐ */
+        .nums { flex: 1; padding: 10px; display: grid; gap: 8px; align-items: center; background: #fff; }
+        
+        /* Bịt vá Grid: Cân đối không bị cắt chữ */
+        .g-cen { display: flex; justify-content: center; width: 100%; }
         .g-2 { grid-template-columns: repeat(2, 1fr); }
         .g-3 { grid-template-columns: repeat(3, 1fr); }
         .g-4 { grid-template-columns: repeat(4, 1fr); }
 
+        /* Ô SỐ BỌC THÉP */
         code.n { 
-            display: inline-flex; justify-content: center; align-items: center;
-            background: #fff; border: 1px solid #ddd; border-radius: 8px;
-            padding: 6px 0; font-family: 'Courier New', monospace; font-size: 16px; font-weight: 800; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            display: flex; justify-content: center; align-items: center;
+            background: #fff; border: 1px solid #eaeaea; border-radius: 8px;
+            padding: 8px 4px; /* Fix lỗi cắt viền */
+            font-family: 'Courier New', monospace; font-size: 16px; font-weight: 900; 
+            color: #222;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.02); /* Lõm nhẹ xuống */
+            width: 100%;
+            letter-spacing: 1px;
         }
         .red-tail { color: var(--primary); font-weight: 900; }
         
-        .row-db { background: var(--primary-light); }
-        .row-db .lbl { color: var(--primary); border-right-color: #ffb3c1; background: transparent; }
-        .row-db code.n { font-size: 24px; color: var(--primary); border-color: #ffb3c1; padding: 10px 0; width: 100%; }
-        .row-db .red-tail { color: inherit; }
+        /* MÃ ĐẶC BIỆT */
+        .row-ma .lbl { font-size: 10px; background: #fafafa; }
+        .row-ma code.n { font-size: 14px; background: #fdfdfd; border-color: #f0f0f0; color: #555; letter-spacing: 0;}
 
-        /* [3] TẤM MÀN THỐNG KÊ (BOTTOM SHEET) */
+        /* GIẢI ĐẶC BIỆT & GIẢI 1 */
+        .row-db { background: var(--primary-light); }
+        .row-db .nums { background: var(--primary-light); }
+        .row-db code.n { font-size: 26px; color: var(--primary); border: 2px solid #ffb3c1; padding: 10px 0; letter-spacing: 3px; box-shadow: 0 4px 10px rgba(217,4,41,0.1);}
+        
+        .row-g1 code.n { font-size: 20px; letter-spacing: 2px; padding: 10px 0; border-color: #ccc; }
+
+        /* [4] TẤM MÀN THỐNG KÊ (BOTTOM SHEET) */
         .bottom-sheet {
             position: absolute; left: 0; right: 0; bottom: 0;
-            height: 85vh; background: var(--card);
+            height: 85vh; background: var(--bg);
             border-top-left-radius: 24px; border-top-right-radius: 24px;
             box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
-            transform: translateY(75vh); /* Chỉ hở cái thanh nắm và tiêu đề */
+            transform: translateY(76vh); 
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000;
         }
         .bottom-sheet.active { transform: translateY(15vh); }
 
-        /* Handle và Tiêu đề Đỏ */
-        .drag-handle-area { padding: 15px 10px; text-align: center; cursor: pointer; border-bottom: 1px solid var(--border); }
-        .handle-bar { width: 40px; height: 5px; background: #ccc; border-radius: 10px; margin: 0 auto 12px; }
-        .sheet-title { color: var(--primary); font-size: 16px; font-weight: 900; text-transform: uppercase; }
+        .drag-handle-area { padding: 15px 10px; text-align: center; cursor: pointer; border-bottom: 1px solid var(--border); background: #fff; border-top-left-radius: 24px; border-top-right-radius: 24px;}
+        .handle-bar { width: 40px; height: 5px; background: #ccc; border-radius: 10px; margin: 0 auto 10px; }
+        .sheet-title { color: var(--primary); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;}
 
-        /* HÀNG THỨ 2 -> CHỦ NHẬT (LINH HỒN CỦA BOSS) */
+        /* NÚT THỨ (STYLE TACTILE TỪ ẢNH ÔNG LỚN) */
         .day-row {
             display: flex; justify-content: space-between; padding: 15px;
             background: #fff; border-bottom: 1px solid var(--border);
         }
         .day-item {
-            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-            border-radius: 12px; background: var(--bg); font-size: 12px; font-weight: 800;
-            color: #555; border: 1px solid var(--border); cursor: pointer; transition: 0.2s;
+            width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; font-size: 13px; font-weight: 800; color: #666;
+            cursor: pointer; transition: all 0.2s ease;
+            /* Ứng dụng Neumorphism (Ánh điện viền) */
+            background: var(--btn-bg);
+            box-shadow: var(--btn-shadow), var(--btn-inner);
+            border: 1px solid #fff;
         }
-        .day-item.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 10px rgba(217,4,41,0.3); }
+        .day-item:active {
+            box-shadow: inset 3px 3px 6px #d9dce0, inset -3px -3px 6px #ffffff;
+        }
+        .day-item.active { 
+            background: var(--primary); color: #fff; border-color: var(--primary); 
+            box-shadow: 0 6px 15px var(--primary-glow), inset 1px 1px 3px rgba(255,255,255,0.4); 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
 
-        /* Nội dung thống kê */
-        .sheet-content { padding: 20px; overflow-y: auto; height: calc(100% - 130px); background: #fafafa; }
-        .stat-card { background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
-        .stat-card h4 { font-size: 14px; color: var(--primary); margin-bottom: 8px; font-weight: 900; }
-        .stat-card p { font-size: 13px; color: #666; font-weight: 600; line-height: 1.5; }
+        /* NỘI DUNG THỐNG KÊ */
+        .sheet-content { padding: 15px; overflow-y: auto; height: calc(100% - 130px); background: var(--bg); }
+        .stat-card { 
+            background: #fff; border: 1px solid #fff; padding: 15px; 
+            border-radius: 16px; margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        .stat-card h4 { font-size: 14px; color: var(--primary); margin-bottom: 6px; font-weight: 900; }
+        .stat-card p { font-size: 13px; color: #444; font-weight: 600; line-height: 1.6; }
 
     </style>
 </head>
@@ -104,21 +172,33 @@
         </div>
 
         <div class="result-table">
+            <div class="row row-ma">
+                <div class="lbl">MÃ ĐB</div>
+                <div class="nums g-3">
+                    <code class="n">3ZF</code>
+                    <code class="n">9ZD</code>
+                    <code class="n">6ZB</code>
+                </div>
+            </div>
+
             <div class="row row-db">
-                <div class="lbl">ĐB</div>
+                <div class="lbl active-glow">ĐB</div>
                 <div class="nums g-cen"><code class="n">82567</code></div>
             </div>
-            <div class="row">
+
+            <div class="row row-g1">
                 <div class="lbl">G1</div>
-                <div class="nums g-cen"><code class="n">341<span>95</span></code></div>
+                <div class="nums g-cen"><code class="n">341<span class="red-tail">95</span></code></div>
             </div>
+
             <div class="row">
                 <div class="lbl">G2</div>
                 <div class="nums g-2">
-                    <code class="n">612<span>04</span></code>
-                    <code class="n">478<span>39</span></code>
+                    <code class="n">612<span class="red-tail">04</span></code>
+                    <code class="n">478<span class="red-tail">39</span></code>
                 </div>
             </div>
+
             <div class="row">
                 <div class="lbl">G3</div>
                 <div class="nums g-3">
@@ -126,13 +206,35 @@
                     <code class="n">74690</code><code class="n">16348</code><code class="n">39072</code>
                 </div>
             </div>
+
             <div class="row">
                 <div class="lbl">G4</div>
-                <div class="nums g-2"><code class="n">4827</code><code class="n">3160</code><code class="n">9543</code><code class="n">7208</code></div>
+                <div class="nums g-2">
+                    <code class="n">4827</code><code class="n">3160</code>
+                    <code class="n">9543</code><code class="n">7208</code>
+                </div>
             </div>
+
+            <div class="row">
+                <div class="lbl">G5</div>
+                <div class="nums g-3">
+                    <code class="n">2164</code><code class="n">7281</code><code class="n">9920</code>
+                    <code class="n">1023</code><code class="n">5567</code><code class="n">3841</code>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="lbl">G6</div>
+                <div class="nums g-3">
+                    <code class="n">123</code><code class="n">456</code><code class="n">789</code>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="lbl">G7</div>
-                <div class="nums g-4"><code class="n">83</code><code class="n">47</code><code class="n">29</code><code class="n">61</code></div>
+                <div class="nums g-4">
+                    <code class="n">83</code><code class="n">47</code><code class="n">29</code><code class="n">61</code>
+                </div>
             </div>
         </div>
     </div>
@@ -164,7 +266,7 @@
             </div>
             <div class="stat-card">
                 <h4>Lời khuyên từ AI</h4>
-                <p>Hãy chú trọng vào các dãy số có tổng chẵn cho kỳ quay thưởng tiếp theo.</p>
+                <p>Hãy chú trọng vào các dãy số có tổng chẵn cho kỳ quay thưởng tiếp theo. Theo dõi sát Mã Đặc Biệt để lọc cầu.</p>
             </div>
         </div>
     </div>
@@ -189,8 +291,23 @@
         item.addEventListener('click', function() {
             dayItems.forEach(d => d.classList.remove('active'));
             this.classList.add('active');
+            
+            // Haptic Feedback nhẹ khi bấm nút
+            if(window.Telegram && Telegram.WebApp) {
+                Telegram.WebApp.HapticFeedback.selectionChanged();
+            }
         });
     });
+
+    // 3. Demo API (Tưởng tượng): Hàm này có thể được gọi để làm sáng đèn Giải đang quay
+    function setActiveGlow(prizeClass) {
+        // Tắt hết glow cũ
+        document.querySelectorAll('.lbl').forEach(el => el.classList.remove('active-glow'));
+        // Bật glow mới
+        const targetRow = document.querySelector('.' + prizeClass + ' .lbl');
+        if(targetRow) targetRow.classList.add('active-glow');
+    }
+    // Ví dụ: gọi setActiveGlow('row-g1') khi hệ thống đang quay Giải 1
 
     // Telegram Auto Expand
     if(window.Telegram && Telegram.WebApp) {
