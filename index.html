@@ -1,171 +1,206 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Xổ Số Phạm Lê Hoàng Tuấn Đức</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Xổ Số Tuấn Đức Live V13</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================
+           [CSS-BASE] Khung App Bọc Thép 420px
+           ========================================= */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            /* Light Theme (Màu đúc từ image_7a5c64) */
+            --bg: #f2f3f5; --card: #fff; --text: #111; --sub: #666; --border: #eee;
+            --db-t: #c0392b; --db-b: #fff5f5; --db-brd: #f1948a;
+            --g1-t: #d35400; --g2-t: #1a6e28; --g3-t: #1a4f8a; --g4-t: #5a3e9b; --g5-t: #1a7070; --g6-t: #7a5a00; --g7-t: #6b6b6b;
+        }
+        [data-theme="dark"] {
+            /* Dark Theme (Nâng cấp) */
+            --bg: #121212; --card: #1e1e1e; --text: #eaeaea; --sub: #aaa; --border: #333;
+            --db-t: #ff4d4d; --db-b: #3a1a1a; --db-brd: #b33939;
+            --g1-t: #ff9f43; --g2-t: #2ecc71; --g3-t: #3498db; --g4-t: #9b59b6; --g5-t: #00cec9; --g6-t: #f1c40f; --g7-t: #bdc3c7;
+        }
+        body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; transition: background 0.3s; }
+        .app { width: 100%; max-width: 420px; min-height: 100vh; padding: 16px; display: flex; flex-direction: column; opacity: 0; transform: translateY(10px); animation: onLoad 0.4s ease forwards; }
+        @keyframes onLoad { to { opacity: 1; transform: translateY(0); } }
+        .page { display: none; flex-direction: column; flex: 1; gap: 16px; }
+        .page.active { display: flex; }
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+        /* =========================================
+           [CSS-HOME] Header Cứng + Loa + Nút Xịn
+           ========================================= */
+        .header-main { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.06); padding: 16px; position: relative; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .greet { font-size: 16px; font-weight: 800; color: #d90429; }
+        .date { font-size: 13px; font-weight: 600; color: var(--sub); }
+        .btn-main { width: 100%; min-height: 56px; border: none; border-radius: 14px; font-weight: 900; background: linear-gradient(135deg, #ff1744, #d90429); color: #fff; box-shadow: 0 4px 10px rgba(217,4,41,0.2), inset 0 -3px 0 rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s; }
+        .btn-main:active { transform: scale(0.97); box-shadow: 0 2px 5px rgba(217,4,41,0.1); }
+        .loa-xem-so { width: 24px; height: 24px; cursor: pointer; opacity: 0.8; }
 
-<style>
-/* =========================================
-   [CSS-BASE] Khung App Chuẩn
-   ========================================= */
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body { font-family:'Be Vietnam Pro', sans-serif; background:#f2f3f5; min-height:100vh; display:flex; justify-content:center; }
-.app { width:100%; max-width:420px; min-height:100vh; padding:16px; display:flex; flex-direction:column; position:relative; overflow:hidden;}
-.page { display:none; flex-direction:column; flex:1; }
-.page.active { display:flex; }
+        /* =========================================
+           [CSS-DRAW] Bảng 27 Hàng 2 Cột (Mobile)
+           ========================================= */
+        .header-p { display: flex; justify-content: space-between; align-items: center; }
+        .btn-p { border: none; background: none; color: #d90429; font-weight: 800; }
+        .live-label { display: flex; align-items: center; gap: 6px; font-weight: 900; }
+        .live-dot { width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; box-shadow: 0 0 5px #2ecc71; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
 
-/* =========================================
-   [CSS-HOME] Trang Chủ
-   ========================================= */
-.header { text-align:center; margin-bottom:24px; background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
-.message-line { font-size:16px; font-weight:800; color:#d90429; line-height:1.4; }
-.button-group { display:flex; flex-direction:column; gap:16px; }
-.button { width:100%; min-height:56px; padding:10px; border:none; border-radius:14px; font-size:15px; font-weight:800; background:linear-gradient(135deg, #ff1744, #d90429); color:#fff; box-shadow:0 4px 10px rgba(217,4,41,0.2); transition:transform 0.1s; }
-.button:active { transform:scale(0.97); }
+        .result-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.06); overflow: hidden; }
+        .row-l { display: flex; border-bottom: 1px solid var(--border); }
+        .row-l:last-child { border-bottom: none; }
+        .lbl-l { flex: 0 0 72px; padding: 10px 6px 10px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--sub); background: var(--bg-label); display: flex; align-items: center; border-right: 1px solid var(--border); }
+        .nums-l { flex: 1; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+        
+        /* Đúc màu số y hệt BOSS mang về */
+        .num-p { display: inline-flex; justify-content: center; align-items: center; padding: 5px 12px; border-radius: 8px; font-family: 'Courier New', monospace; font-weight: 800; color: #111; cursor: pointer; transition: 0.1s; }
+        .num-p.red { color: #d90429 !important; font-weight: 900; background: #fff5f5; border: 1px solid #f1948a; }
+        .row-db .num-p { font-size: 24px; min-width: 80px; letter-spacing: 2px; color: var(--db-t); background: var(--db-b); border: 2px solid var(--db-brd); }
+        .row-1 .num-p { color: var(--g1-t); font-size: 16px; border: 1px solid rgba(211,84,0,0.3); }
+        .row-2 .num-p { color: var(--g2-t); font-size: 15px; border: 1px solid rgba(26,110,40,0.3); }
+        .row-7 .num-p { color: var(--g7-t); border: 1px solid rgba(107,107,107,0.3); }
+        
+        /* Bọc thép số đỏ 2 số cuối */
+        .red-tail { color: #d90429; font-weight: 900; }
+        .row-db .red-tail, .num-p.red .red-tail { color: inherit; }
 
-/* =========================================
-   [CSS-DRAW] Kết Quả Miền Bắc 27 Dòng
-   ========================================= */
-.mb-result { background:#fff; padding:12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.06); margin-bottom:16px; }
-.prize-row { display:grid; gap:8px; margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #eee; }
-.prize-row:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+        /* =========================================
+           [CSS-STATS] Dark Mode & Nặn Số 3D
+           ========================================= */
+        .controls-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+        .ctrl-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; }
+        .btn-3d { border: 2px solid #ccc; background: var(--card); color: var(--text); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 900; text-transform: uppercase; box-shadow: 0 3px 0 #bbb; cursor: pointer; }
+        .btn-3d.active { color: #fff; background: #d90429; border-color: #ff1744; box-shadow: 0 1px 0 #a00; transform: translateY(2px); }
 
-.grid-1 { grid-template-columns: 1fr; }
-.grid-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-4 { grid-template-columns: repeat(4, 1fr); }
-
-.ma-db-style { text-align:center; font-size:15px; font-weight:800; color:#555; letter-spacing:2px; margin-bottom:6px; padding:4px; background:#f8f9fa; border-radius:6px; }
-
-.num-box { font-variant-numeric: tabular-nums; font-weight: 900; font-size: 20px; text-align: center; color: #111; letter-spacing: 1px; }
-.num-box.db { font-size: 30px; color: #d90429; text-shadow: 1px 1px 2px rgba(217,4,41,0.2); }
-.last-two { color: #ff1744; }
-
-/* =========================================
-   [CSS-STATS] Bottom Sheet & Ruột Thống Kê VIP
-   ========================================= */
-.bottom-sheet { 
-    position:absolute; bottom:0; left:0; width:100%; 
-    height: 90vh; 
-    background:#ffffff; border-radius:24px 24px 0 0; 
-    box-shadow:0 -10px 25px rgba(0,0,0,0.2); 
-    transition:transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); 
-    z-index:999; display:flex; flex-direction:column; 
-    transform:translateY(calc(100% - 60px)); 
-}
-.bottom-sheet.active { transform:translateY(0); }
-.drag-handle { width:50px; height:6px; background:#ccc; border-radius:10px; margin:15px auto; cursor:pointer; }
-.sheet-title { text-align:center; font-weight:900; color:#d90429; font-size:16px; margin-bottom:5px; text-transform:uppercase; }
-
-/* CSS do BOSS cung cấp đã được đổ bê tông */
-.stats-container { width: 100%; max-width: 100%; background: #ffffff; font-size: 11px; overflow-x: hidden; display: flex; flex-direction: column; flex: 1; overflow-y: hidden; }
-.stats-header { display: grid; grid-template-columns: repeat(7, 1fr); background: #f8f9fa; border-bottom: 2px solid #d90429; font-weight: 900; text-align: center; padding: 12px 0; color: #111; position: sticky; top: 0; z-index: 10; }
-.stats-body { display: flex; flex-direction: column; overflow-y: auto; flex: 1; padding-bottom: 30px; }
-.stats-row { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid #eee; }
-.stats-cell { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-right: 1px solid #eee; font-weight: 900; font-variant-numeric: tabular-nums; letter-spacing: 0px; }
-.stats-cell:last-child { border-right: none; }
-.num-head { color: #555; }
-.num-tail { color: #ff1744; text-shadow: 0 0 1px rgba(255,23,68,0.3); }
-.stats-cell.empty { background: #fafafa; }
-</style>
+        /* Cơ chế nặn số 3D/5D ảo diệu cho Giải ĐB */
+        #nan-stage { position: relative; border-radius: 10px; overflow: hidden; border: 2px dashed #ff9f43; cursor: pointer; display: none; margin: 0 auto 10px; width: 200px; height: 50px;}
+        #nan-cover { position: absolute; inset: 0; background: linear-gradient(135deg, #bbb, #999); display: flex; justify-content: center; align-items: center; color: #fff; font-weight: 900; font-size: 18px; text-transform: uppercase; z-index: 10; transition: clip-path 0.2s ease-out; }
+        #db-hidden { position: absolute; inset: 0; background: var(--db-b); color: var(--db-t); display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: 800; letter-spacing: 4px; border: 2px solid var(--db-brd); }
+    </style>
 </head>
-
 <body>
 <div class="app">
-
     <div id="page-home" class="page active">
-        <div class="header">
-            <div class="message-line" id="messageLine">ĐANG TẢI DỮ LIỆU...</div>
+        <div class="header-main">
+            <div class="header-top-row">
+                <div class="greet">KÊNH CHÍNH THỨC</div>
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0xMSAxOWE3IDcgMCAxIDAtNy03IDcgNyAwIDAgMDcgNyI+PC9wYXRoPjxwYXRoIGQ9Ik0xNiA4aC4wMU0xNy40NDYgMTkuOWExMC44NiAxMC44NiAwIDAgMC03LTcgMTAuODYgMTAuODYgMCAwIDAtNyA3Ij48L3BhdGg+PC9zdmc+" class="loa-xem-so" alt="Loa">
+            </div>
+            <p class="date" id="homeDate">Thứ Tư, 25/03/2026</p>
         </div>
-        <div class="button-group">
-            <button class="button" onclick="openDrawPage()">TRỰC TIẾP KẾT QUẢ XỔ SỐ</button>
-        </div>
+        <button class="btn-main" onclick="p(2)">XEM TRỰC TIẾP MIỀN BẮC LIVE</button>
     </div>
 
     <div id="page-draw" class="page">
-        <div style="display:flex; justify-content:space-between; margin-bottom:16px; align-items:center;">
-            <button onclick="goHome()" style="border:none; background:none; color:#d90429; font-weight:800; font-size:15px;">← TRỞ VỀ</button>
-            <strong style="color:#111; font-size:16px;">XỔ SỐ MIỀN BẮC</strong>
-            <div style="width:60px;"></div>
+        <div class="header-p">
+            <button class="btn-p" onclick="p(1)">← TRỞ VỀ</button>
+            <div class="live-label"><div class="live-dot"></div>MIỀN BẮC LIVE</div>
+            <code style="font-weight:700; color:var(--g7-t);">G7</code>
+        </div>
+        
+        <div class="result-card" id="b">
+            <div style="text-align:center; padding: 40px; color: var(--sub);">Đang kết nối ống truyền máu...</div>
         </div>
 
-        <div class="mb-result" id="result-board">
-            <div class="ma-db-style" id="ma-db">KÝ HIỆU: 1A - 2B - 3C</div>
-            <div class="prize-row grid-1"><div class="num-box db" id="prize-db">123<span class="last-two">45</span></div></div>
-            <div class="prize-row grid-1"><div class="num-box">543<span class="last-two">21</span></div></div>
-            <div class="prize-row grid-2"><div class="num-box">111<span class="last-two">11</span></div><div class="num-box">222<span class="last-two">22</span></div></div>
-            <div class="prize-row grid-3"><div class="num-box">123<span class="last-two">45</span></div><div class="num-box">234<span class="last-two">56</span></div><div class="num-box">345<span class="last-two">67</span></div><div class="num-box">456<span class="last-two">78</span></div><div class="num-box">567<span class="last-two">89</span></div><div class="num-box">678<span class="last-two">90</span></div></div>
-            <div class="prize-row grid-4"><div class="num-box">12<span class="last-two">34</span></div><div class="num-box">23<span class="last-two">45</span></div><div class="num-box">34<span class="last-two">56</span></div><div class="num-box">45<span class="last-two">67</span></div></div>
-            <div class="prize-row grid-3"><div class="num-box">11<span class="last-two">11</span></div><div class="num-box">22<span class="last-two">22</span></div><div class="num-box">33<span class="last-two">33</span></div><div class="num-box">44<span class="last-two">44</span></div><div class="num-box">55<span class="last-two">55</span></div><div class="num-box">66<span class="last-two">66</span></div></div>
-            <div class="prize-row grid-3"><div class="num-box">1<span class="last-two">23</span></div><div class="num-box">4<span class="last-two">56</span></div><div class="num-box">7<span class="last-two">89</span></div></div>
-            <div class="prize-row grid-4"><div class="num-box last-two">01</div><div class="num-box last-two">02</div><div class="num-box last-two">03</div><div class="num-box last-two">04</div></div>
-        </div>
-
-        <div class="bottom-sheet" id="bottomSheet">
-            <div class="drag-handle"></div>
-            <div class="sheet-title">BẢNG THỐNG KÊ ĐẶC BIỆT</div>
-            
-            <div class="stats-container">
-                <div class="stats-header">
-                    <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div>
-                </div>
-                
-                <div class="stats-body">
-                    <div class="stats-row">
-                        <div class="stats-cell"><span class="num-head">123</span><span class="num-tail">45</span></div>
-                        <div class="stats-cell"><span class="num-head">678</span><span class="num-tail">90</span></div>
-                        <div class="stats-cell"><span class="num-head">543</span><span class="num-tail">21</span></div>
-                        <div class="stats-cell"><span class="num-head">987</span><span class="num-tail">65</span></div>
-                        <div class="stats-cell"><span class="num-head">112</span><span class="num-tail">23</span></div>
-                        <div class="stats-cell"><span class="num-head">445</span><span class="num-tail">56</span></div>
-                        <div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div>
-                    </div>
-                    <div class="stats-row">
-                        <div class="stats-cell"><span class="num-head">990</span><span class="num-tail">12</span></div>
-                        <div class="stats-cell"><span class="num-head">334</span><span class="num-tail">45</span></div>
-                        <div class="stats-cell"><span class="num-head">556</span><span class="num-tail">67</span></div>
-                        <div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div>
-                        <div class="stats-cell"><span class="num-head">112</span><span class="num-tail">34</span></div>
-                        <div class="stats-cell empty">-</div>
-                        <div class="stats-cell empty">-</div>
-                    </div>
-                    <div class="stats-row"><div class="stats-cell"><span class="num-head">123</span><span class="num-tail">45</span></div><div class="stats-cell"><span class="num-head">678</span><span class="num-tail">90</span></div><div class="stats-cell"><span class="num-head">543</span><span class="num-tail">21</span></div><div class="stats-cell"><span class="num-head">987</span><span class="num-tail">65</span></div><div class="stats-cell"><span class="num-head">112</span><span class="num-tail">23</span></div><div class="stats-cell"><span class="num-head">445</span><span class="num-tail">56</span></div><div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div></div>
-                    <div class="stats-row"><div class="stats-cell"><span class="num-head">123</span><span class="num-tail">45</span></div><div class="stats-cell"><span class="num-head">678</span><span class="num-tail">90</span></div><div class="stats-cell"><span class="num-head">543</span><span class="num-tail">21</span></div><div class="stats-cell"><span class="num-head">987</span><span class="num-tail">65</span></div><div class="stats-cell"><span class="num-head">112</span><span class="num-tail">23</span></div><div class="stats-cell"><span class="num-head">445</span><span class="num-tail">56</span></div><div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div></div>
-                </div>
+        <div class="controls-card">
+            <div id="nan-stage" onclick="nan(this)">
+                <div id="nan-cover">QUÉT TAY ĐỂ NẶN</div>
+                <div id="db-hidden">------</div>
+            </div>
+            <div class="ctrl-row">
+                <span>DARK MODE</span>
+                <button class="btn-3d" id="tD" onclick="tD()">TẮT</button>
+            </div>
+            <div class="ctrl-row">
+                <span>NẶN SỐ ĐẶC BIỆT</span>
+                <button class="btn-3d" id="tN" onclick="tN()">TẮT</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+// =========================================
+// [JS] CỐ CẤU THẦN KINH - ÉP AI LÀM ĐÚNG
+// =========================================
 if(window.Telegram && Telegram.WebApp){ Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
 
-const greetings = [
-    "Xin chào các cô, các chú, các anh, các chị!",
-    "Hôm nay vận đỏ, Tuấn Đức chúc anh em trúng lớn!",
-    "Thầy giáo Tuấn Đức chốt số, anh em vào xem ngay!",
-    "Sẵn sàng chưa? Kênh Phạm Lê Hoàng Tuấn Đức chuẩn bị mở thưởng!"
-];
-document.getElementById("messageLine").innerText = greetings[Math.floor(Math.random() * greetings.length)];
+// [TỬ HUYỆT] CẮM DÂY TRUYỀN MÁU API CỦA BOSS VÀO ĐÂY
+const API_URL = "DÁN_LINK_WEB_APP_GOOGLE_CỦA_BOSS_VÀO_ĐÂY";
 
-function openDrawPage() { document.getElementById('page-home').classList.remove('active'); document.getElementById('page-draw').classList.add('active'); }
-function goHome() { document.getElementById('page-draw').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
+// Khởi tạo trang & lấy dữ liệu
+async function fetchLottery(){
+    if(!API_URL.startsWith('https')) return;
+    try {
+        const r = await fetch(API_URL);
+        const d = await r.json();
+        if(d.db) rB(d);
+    } catch(e) { console.log(e); }
+}
+fetchLottery(); // Khai hỏa lúc load
 
-// CƠ CHẾ VUỐT
-const sheet = document.getElementById('bottomSheet');
-let startY;
-sheet.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
-sheet.addEventListener('touchmove', (e) => {
-    let currentY = e.touches[0].clientY;
-    if (startY - currentY > 40) { sheet.classList.add('active'); } 
-    else if (currentY - startY > 40) { sheet.classList.remove('active'); } 
-});
-document.querySelector('.drag-handle').addEventListener('click', () => { sheet.classList.toggle('active'); });
+// Ráp bảng theo hiến pháp
+function rB(d){
+    const h = d.db.slice(0,-2), t = d.db.slice(-2);
+    // Lưu số để nặn
+    document.getElementById('db-hidden').innerText = d.db;
 
+    // Ráp HTML
+    document.getElementById('b').innerHTML = `
+        <div class="row-l row-db"><div class="lbl-l">Đặc biệt</div><div class="nums-l"><div class="num-p" id="db-p">${fN(d.db)}</div></div></div>
+        ${rR('1', d.g1)} ${rR('2', d.g2)} ${rR('3', d.g3)} ${rR('4', d.g4)} ${rR('5', d.g5)} ${rR('6', d.g6)} ${rR('7', d.g7)}
+    `;
+    mC(); // Gắn sự kiện copy
+}
+
+// Bóc tách từng con số (Chấp hành Quân luật Gom Bi)
+function fN(s){ return `<span>${s.slice(0,-2)}</span><span class="red-tail">${s.slice(-2)}</span>`; }
+function rR(g, a){ return `<div class="row-l row-${g}"><div class="lbl-l">Giải ${g}</div><div class="nums-l">${a.map(v=>`<div class="num-p" style="${g>3?'font-size:14px':''}">${fN(v)}</div>`).join('')}</div></div>`; }
+
+// Gắn sự kiện Copy (Chấp hành Điều 8 - Chạm là cướp)
+function mC(){
+    document.querySelectorAll('.nums-l .num-p').forEach(n=>{
+        n.addEventListener('click', ()=>{
+            const t = n.querySelector('.red-tail').innerText;
+            navigator.clipboard.writeText(t);
+            n.classList.add('red');
+            if(window.Telegram && Telegram.WebApp) Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            setTimeout(()=>n.classList.remove('red'),1000);
+        });
+    });
+}
+
+// Giao diện (Page)
+function p(i){ document.querySelectorAll('.page').forEach((x,j)=>x.classList.toggle('active', j+1===i)); }
+
+// Dark Mode
+function tD(){
+    const b = document.getElementById('tD'), th = document.documentElement;
+    const isL = th.getAttribute('data-theme') === 'light';
+    th.setAttribute('data-theme', isL?'dark':'light');
+    b.innerText = isL?'BẬT':'TẮT';
+    b.classList.toggle('active', isL);
+}
+
+// Chế độ Nặn Số
+let inN = false, d=0;
+function tN(){
+    const b = document.getElementById('tN'), s = document.getElementById('nan-stage'), p = document.getElementById('db-p');
+    inN = !inN;
+    s.style.display = inN?'flex':'none';
+    p.style.visibility = inN?'hidden':'visible';
+    b.innerText = inN?'BẬT':'TẮT';
+    b.classList.toggle('active', inN);
+}
+
+// Nặn số giải đặc biệt (Peeling effect)
+function nan(e){
+    d += 20; e.querySelector('#nan-cover').style.clipPath = `polygon(${d}% 0%, 100% 0%, 100% 100%, ${d}% 100%)`;
+    if(d >= 100){ setTimeout(()=>{ tN(); d=0; e.querySelector('#nan-cover').style.clipPath = 'none'; }, 500); }
+}
 </script>
 </body>
 </html>
