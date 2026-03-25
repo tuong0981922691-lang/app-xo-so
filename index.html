@@ -1,203 +1,177 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Xổ Số Tuấn Đức Live V14</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        /* =========================================
-           [CSS-BASE] Khung App Bọc Thép 420px
-           ========================================= */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        :root {
-            --bg: #f2f3f5; --card: #fff; --text: #111; --sub: #666; --border: #eee;
-            --db-t: #c0392b; --db-b: #fff5f5; --db-brd: #f1948a;
-            --g1-t: #d35400; --g2-t: #1a6e28; --g3-t: #1a4f8a; --g4-t: #5a3e9b; --g5-t: #1a7070; --g6-t: #7a5a00; --g7-t: #6b6b6b;
-        }
-        [data-theme="dark"] {
-            --bg: #121212; --card: #1e1e1e; --text: #eaeaea; --sub: #aaa; --border: #333;
-            --db-t: #ff4d4d; --db-b: #3a1a1a; --db-brd: #b33939;
-            --g1-t: #ff9f43; --g2-t: #2ecc71; --g3-t: #3498db; --g4-t: #9b59b6; --g5-t: #00cec9; --g6-t: #f1c40f; --g7-t: #bdc3c7;
-        }
-        body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; transition: background 0.3s; }
-        .app { width: 100%; max-width: 420px; min-height: 100vh; padding: 16px; display: flex; flex-direction: column; opacity: 0; transform: translateY(10px); animation: onLoad 0.4s ease forwards; }
-        @keyframes onLoad { to { opacity: 1; transform: translateY(0); } }
-        .page { display: none; flex-direction: column; flex: 1; gap: 16px; }
-        .page.active { display: flex; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xổ số miền Bắc</title>
 
-        /* =========================================
-           [CSS-HOME] Header
-           ========================================= */
-        .header-main { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.06); padding: 16px; position: relative; }
-        .header-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .greet { font-size: 16px; font-weight: 900; color: #d90429; text-transform: uppercase;}
-        .date { font-size: 13px; font-weight: 600; color: var(--sub); }
-        .btn-main { width: 100%; min-height: 56px; border: none; border-radius: 14px; font-weight: 900; font-size: 15px; background: linear-gradient(135deg, #ff1744, #d90429); color: #fff; box-shadow: 0 4px 10px rgba(217,4,41,0.2), inset 0 -3px 0 rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s; }
-        .btn-main:active { transform: scale(0.97); box-shadow: 0 2px 5px rgba(217,4,41,0.1); }
-        .loa-xem-so { width: 24px; height: 24px; cursor: pointer; opacity: 0.8; }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding: 20px;
+}
 
-        /* =========================================
-           [CSS-DRAW] Bảng 27 Hàng
-           ========================================= */
-        .header-p { display: flex; justify-content: space-between; align-items: center; }
-        .btn-p { border: none; background: none; color: #d90429; font-weight: 800; font-size: 15px;}
-        .live-label { display: flex; align-items: center; gap: 6px; font-weight: 900; font-size: 15px;}
-        .live-dot { width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; box-shadow: 0 0 5px #2ecc71; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.3; } }
+/* HEADER /
+.header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+.header h1 {
+  font-size: 22px;
+  font-weight: bold;
+}
+.header p {
+  color: #666;
+}
 
-        .result-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.06); overflow: hidden; }
-        .row-l { display: flex; border-bottom: 1px solid var(--border); }
-        .row-l:last-child { border-bottom: none; }
-        .lbl-l { flex: 0 0 75px; padding: 10px 4px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--sub); background: var(--bg-label); display: flex; align-items: center; justify-content: center; text-align: center; border-right: 1px solid var(--border); }
-        .nums-l { flex: 1; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-start;}
-        
-        .num-p { display: inline-flex; justify-content: center; align-items: center; padding: 5px 12px; border-radius: 8px; font-family: 'Courier New', monospace; font-weight: 800; color: #111; cursor: pointer; transition: 0.1s; }
-        .num-p.red { color: #d90429 !important; font-weight: 900; background: #fff5f5; border: 1px solid #f1948a; }
-        
-        .row-db .lbl-l { color: var(--db-t); font-size: 12px;}
-        .row-db .num-p { font-size: 26px; min-width: 80px; letter-spacing: 2px; color: var(--db-t); background: var(--db-b); border: 2px solid var(--db-brd); padding: 8px 16px;}
-        .row-1 .num-p { color: var(--g1-t); font-size: 18px; border: 1.5px solid rgba(211,84,0,0.3); }
-        .row-2 .num-p { color: var(--g2-t); font-size: 16px; border: 1.5px solid rgba(26,110,40,0.3); }
-        .row-3 .num-p { color: var(--g3-t); font-size: 15px; border: 1.5px solid rgba(26,79,138,0.3); }
-        .row-4 .num-p { color: var(--g4-t); font-size: 14px; border: 1.5px solid rgba(90,62,155,0.3); }
-        .row-5 .num-p { color: var(--g5-t); font-size: 14px; border: 1.5px solid rgba(26,112,112,0.3); }
-        .row-6 .num-p { color: var(--g6-t); font-size: 14px; border: 1.5px solid rgba(122,90,0,0.3); }
-        .row-7 .num-p { color: var(--g7-t); font-size: 14px; border: 1.5px solid rgba(107,107,107,0.3); }
-        
-        .red-tail { color: #d90429; font-weight: 900; }
-        .row-db .red-tail, .num-p.red .red-tail { color: inherit; }
+/ CONTROL /
+.control-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.control-panel label {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-        /* =========================================
-           [CSS-STATS] Điều khiển (Thuần Việt)
-           ========================================= */
-        .controls-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; display: flex; flex-direction: column; gap: 14px; }
-        .ctrl-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 800; }
-        .btn-3d { border: 2px solid var(--border); background: var(--bg-label); color: var(--text); padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 900; text-transform: uppercase; box-shadow: 0 3px 0 var(--border); cursor: pointer; transition: 0.1s;}
-        .btn-3d.active { color: #fff; background: #d90429; border-color: #ff1744; box-shadow: 0 1px 0 #a00; transform: translateY(2px); }
+/ TABLE /
+.table {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+}
 
-        /* Chế độ Lặn Số */
-        #nan-stage { position: relative; border-radius: 10px; overflow: hidden; border: 2px dashed #ff9f43; cursor: pointer; display: none; margin: 0 auto 10px; width: 220px; height: 60px;}
-        #nan-cover { position: absolute; inset: 0; background: linear-gradient(135deg, #444, #222); display: flex; justify-content: center; align-items: center; color: #fff; font-weight: 900; font-size: 15px; text-transform: uppercase; z-index: 10; transition: clip-path 0.2s ease-out; box-shadow: inset 0 0 10px #000;}
-        #db-hidden { position: absolute; inset: 0; background: var(--db-b); color: var(--db-t); display: flex; justify-content: center; align-items: center; font-size: 28px; font-weight: 900; letter-spacing: 5px; border: 2px solid var(--db-brd); }
-    </style>
+.row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.numbers {
+  display: grid;
+  gap: 8px;
+}
+
+/ GRID /
+.g2 { grid-template-columns: repeat(2, 1fr); }
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.g4 { grid-template-columns: repeat(4, 1fr); }
+
+/ NUMBER /
+.number {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/ SPECIAL /
+.special .number {
+  border: 2px solid red;
+  color: red;
+  font-size: 18px;
+}
+
+/ ANIMATION /
+.blink {
+  animation: blink 0.5s infinite alternate;
+}
+@keyframes blink {
+  from { background: #fff; }
+  to { background: #ffeaa7; }
+}
+
+/ MOBILE */
+@media (max-width:768px){
+  .row {
+    grid-template-columns: 70px 1fr;
+  }
+}
+</style>
 </head>
+
 <body>
-<div class="app">
-    <div id="page-home" class="page active">
-        <div class="header-main">
-            <div class="header-top-row">
-                <div class="greet">KẾT QUẢ TRỰC TIẾP</div>
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0xMSAxOWE3IDcgMCAxIDAtNy03IDcgNyAwIDAgMDcgNyI+PC9wYXRoPjxwYXRoIGQ9Ik0xNiA4aC4wMU0xNy40NDYgMTkuOWExMC44NiAxMC44NiAwIDAgMC03LTcgMTAuODYgMTAuODYgMCAwIDAtNyA3Ij48L3BhdGg+PC9zdmc+" class="loa-xem-so" alt="Loa">
-            </div>
-            <p class="date" id="homeDate">Thứ Tư, 25/03/2026</p>
-        </div>
-        <button class="btn-main" onclick="p(2)">XEM KẾT QUẢ XỔ SỐ</button>
-    </div>
 
-    <div id="page-draw" class="page">
-        <div class="header-p">
-            <button class="btn-p" onclick="p(1)">← TRỞ VỀ</button>
-            <div class="live-label"><div class="live-dot"></div>MIỀN BẮC LIVE</div>
-            <span style="font-weight:800; font-size: 14px; color:var(--g7-t);">25/03</span>
-        </div>
-        
-        <div class="result-card" id="b">
-            <div style="text-align:center; padding: 40px; color: var(--sub); font-weight: 600;">Đang tải dữ liệu xổ số...</div>
-        </div>
+<div class="header">
+  <h1>XỔ SỐ MIỀN BẮC</h1>
+  <p>Hà Nội - Thứ X - Ngày DD/MM/YYYY</p>
+</div>
 
-        <div class="controls-card">
-            <div id="nan-stage" onclick="nan(this)">
-                <div id="nan-cover">👉 VUỐT ĐỂ LẶN SỐ</div>
-                <div id="db-hidden">------</div>
-            </div>
-            <div class="ctrl-row">
-                <span>CHẾ ĐỘ TỐI (DARK)</span>
-                <button class="btn-3d" id="tD" onclick="tD()">TẮT</button>
-            </div>
-            <div class="ctrl-row">
-                <span>LẶN SỐ ĐẶC BIỆT</span>
-                <button class="btn-3d" id="tN" onclick="tN()">TẮT</button>
-            </div>
-        </div>
+<div class="control-panel">
+  <label><input type="checkbox" id="toggleHide"> Lặn số</label>
+  <label><input type="checkbox" id="toggleAnim"> Hiệu ứng</label>
+</div>
+
+<div class="table">
+
+  <div class="row special">
+    <div class="label">ĐB</div>
+    <div class="numbers g1">
+      <div class="number">82567</div>
     </div>
+  </div>
+
+  <div class="row">
+    <div class="label">G1</div>
+    <div class="numbers g1">
+      <div class="number">34195</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="label">G2</div>
+    <div class="numbers g2">
+      <div class="number">61204</div>
+      <div class="number">47839</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="label">G3</div>
+    <div class="numbers g3">
+      <div class="number">90153</div>
+      <div class="number">28476</div>
+      <div class="number">53821</div>
+      <div class="number">74690</div>
+      <div class="number">16348</div>
+      <div class="number">39072</div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-if(window.Telegram && Telegram.WebApp){ Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+// LẶN SỐ
+document.getElementById("toggleHide").addEventListener("change", function(e){
+  document.querySelectorAll(".number").forEach(el=>{
+    el.style.filter = e.target.checked ? "blur(6px)" : "none";
+  });
+});
 
-// DÁN LINK GOOGLE APPS SCRIPT VÀO ĐÂY (Nếu để trống sẽ hiện số mẫu)
-const API_URL = ""; 
-
-// DỮ LIỆU MẪU ĐỂ BOSS XEM GIAO DIỆN KHI CHƯA CÓ LINK API
-const DUMMY_DATA = {
-    db: "82567", g1: ["34195"], g2: ["61204", "47839"],
-    g3: ["90153", "28476", "53821", "74690", "16348", "39072"],
-    g4: ["4827", "3160", "9543", "7208"], g5: ["1374", "6089", "4251", "8736", "2940", "5617"],
-    g6: ["392", "748", "165"], g7: ["83", "47", "29", "61"]
-};
-
-async function fetchLottery(){
-    // Nếu chưa có link API -> Xả số mẫu ra cho BOSS xem ngay lập tức
-    if(!API_URL.startsWith('https')) { rB(DUMMY_DATA); return; }
-    try {
-        const r = await fetch(API_URL);
-        const d = await r.json();
-        if(d.db) rB(d); else rB(DUMMY_DATA);
-    } catch(e) { rB(DUMMY_DATA); }
-}
-fetchLottery(); 
-
-function rB(d){
-    document.getElementById('db-hidden').innerText = d.db;
-    document.getElementById('b').innerHTML = `
-        <div class="row-l row-db"><div class="lbl-l">Đặc biệt</div><div class="nums-l"><div class="num-p" id="db-p">${fN(d.db)}</div></div></div>
-        ${rR('1', d.g1, 'Giải Nhất')} ${rR('2', d.g2, 'Giải Nhì')} ${rR('3', d.g3, 'Giải Ba')} 
-        ${rR('4', d.g4, 'Giải Tư')} ${rR('5', d.g5, 'Giải Năm')} ${rR('6', d.g6, 'Giải Sáu')} ${rR('7', d.g7, 'Giải Bảy')}
-    `;
-    mC();
-}
-
-function fN(s){ return `<span>${s.slice(0,-2)}</span><span class="red-tail">${s.slice(-2)}</span>`; }
-function rR(g, a, txt){ return `<div class="row-l row-${g}"><div class="lbl-l">${txt}</div><div class="nums-l">${a.map(v=>`<div class="num-p">${fN(v)}</div>`).join('')}</div></div>`; }
-
-function mC(){
-    document.querySelectorAll('.nums-l .num-p').forEach(n=>{
-        n.addEventListener('click', ()=>{
-            const t = n.querySelector('.red-tail').innerText;
-            navigator.clipboard.writeText(t);
-            n.classList.add('red');
-            if(window.Telegram && Telegram.WebApp) Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-            setTimeout(()=>n.classList.remove('red'),1000);
-        });
-    });
-}
-
-function p(i){ document.querySelectorAll('.page').forEach((x,j)=>x.classList.toggle('active', j+1===i)); }
-
-function tD(){
-    const b = document.getElementById('tD'), th = document.documentElement;
-    const isL = th.getAttribute('data-theme') === 'light';
-    th.setAttribute('data-theme', isL?'dark':'light');
-    b.innerText = isL?'BẬT':'TẮT';
-    b.classList.toggle('active', isL);
-}
-
-let inN = false, d=0;
-function tN(){
-    const b = document.getElementById('tN'), s = document.getElementById('nan-stage'), p = document.getElementById('db-p');
-    inN = !inN;
-    s.style.display = inN?'flex':'none';
-    p.style.visibility = inN?'hidden':'visible';
-    b.innerText = inN?'BẬT':'TẮT';
-    b.classList.toggle('active', inN);
-}
-
-function nan(e){
-    d += 20; e.querySelector('#nan-cover').style.clipPath = `polygon(${d}% 0%, 100% 0%, 100% 100%, ${d}% 100%)`;
-    if(d >= 100){ setTimeout(()=>{ tN(); d=0; e.querySelector('#nan-cover').style.clipPath = 'none'; }, 500); }
-}
+// HIỆU ỨNG
+document.getElementById("toggleAnim").addEventListener("change", function(e){
+  document.querySelectorAll(".number").forEach(el=>{
+    if(e.target.checked){
+      el.classList.add("blink");
+    } else {
+      el.classList.remove("blink");
+    }
+  });
+});
 </script>
+
 </body>
 </html>
