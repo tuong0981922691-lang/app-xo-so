@@ -1,176 +1,211 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xổ số miền Bắc</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Xổ Số Kính Mờ - Quét Từng Ô</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        /* Nền Gradient động để khoe hiệu ứng Kính trong suốt */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #e94560);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            color: #fff;
+        }
+        @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  padding: 20px;
-}
+        /* Kỷ luật thép 420px */
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-/* HEADER /
-.header {
-  text-align: center;
-  margin-bottom: 15px;
-}
-.header h1 {
-  font-size: 22px;
-  font-weight: bold;
-}
-.header p {
-  color: #666;
-}
+        /* HEADER KÍNH MỜ */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .glass-panel h1 { font-size: 20px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
-/ CONTROL /
-.control-panel {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-.control-panel label {
-  background: #fff;
-  border: 1px solid #ddd;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-}
+        /* BẢNG KẾT QUẢ */
+        .row {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 0;
+        }
+        .row:last-child { border-bottom: none; }
+        
+        .prize-name {
+            flex: 0 0 60px;
+            font-size: 14px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.7);
+        }
 
-/ TABLE /
-.table {
-  background: #fff;
-  border-radius: 12px;
-  padding: 15px;
-}
+        .numbers-grid {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-start;
+        }
 
-.row {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  align-items: center;
-  margin-bottom: 10px;
-}
+        /* Ô SỐ ĐỘ TRONG TÚY (KÍNH MỜ) */
+        .num-cell {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #fff;
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-.label {
-  font-weight: bold;
-}
+        /* ĐIỂM CHẾT: ĐÈN CHẠY TỪNG Ô */
+        .active-light {
+            background: rgba(255, 215, 0, 0.8) !important; /* Vàng chói */
+            color: #000 !important;
+            border-color: #ffd700 !important;
+            transform: scale(1.15) translateY(-2px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), inset 0 0 10px #fff;
+            z-index: 10;
+        }
 
-.numbers {
-  display: grid;
-  gap: 8px;
-}
+        /* Đặc biệt to hơn */
+        .row-db .num-cell { font-size: 24px; letter-spacing: 4px; padding: 10px 18px; color: #ff4d4d; border-color: rgba(255,77,77,0.4); }
 
-/ GRID /
-.g2 { grid-template-columns: repeat(2, 1fr); }
-.g3 { grid-template-columns: repeat(3, 1fr); }
-.g4 { grid-template-columns: repeat(4, 1fr); }
+        /* NÚT ĐIỀU KHIỂN */
+        .btn-action {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .btn-action:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
+        .btn-stop { background: rgba(233, 69, 96, 0.6); border-color: #e94560; }
 
-/ NUMBER /
-.number {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 6px;
-  text-align: center;
-  font-weight: bold;
-}
-
-/ SPECIAL /
-.special .number {
-  border: 2px solid red;
-  color: red;
-  font-size: 18px;
-}
-
-/ ANIMATION /
-.blink {
-  animation: blink 0.5s infinite alternate;
-}
-@keyframes blink {
-  from { background: #fff; }
-  to { background: #ffeaa7; }
-}
-
-/ MOBILE */
-@media (max-width:768px){
-  .row {
-    grid-template-columns: 70px 1fr;
-  }
-}
-</style>
+    </style>
 </head>
-
 <body>
 
-<div class="header">
-  <h1>XỔ SỐ MIỀN BẮC</h1>
-  <p>Hà Nội - Thứ X - Ngày DD/MM/YYYY</p>
-</div>
-
-<div class="control-panel">
-  <label><input type="checkbox" id="toggleHide"> Lặn số</label>
-  <label><input type="checkbox" id="toggleAnim"> Hiệu ứng</label>
-</div>
-
-<div class="table">
-
-  <div class="row special">
-    <div class="label">ĐB</div>
-    <div class="numbers g1">
-      <div class="number">82567</div>
+<div class="app-container">
+    <div class="glass-panel">
+        <h1>MIỀN BẮC LIVE</h1>
+        <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Giao diện Kính & Đèn rọi từng ô</p>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="label">G1</div>
-    <div class="numbers g1">
-      <div class="number">34195</div>
+    <div class="glass-panel" style="padding: 10px 20px;">
+        <div class="row row-db">
+            <div class="prize-name">ĐB</div>
+            <div class="numbers-grid">
+                <div class="num-cell target-cell">82567</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="prize-name">G1</div>
+            <div class="numbers-grid">
+                <div class="num-cell target-cell">34195</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="prize-name">G2</div>
+            <div class="numbers-grid">
+                <div class="num-cell target-cell">61204</div>
+                <div class="num-cell target-cell">47839</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="prize-name">G3</div>
+            <div class="numbers-grid">
+                <div class="num-cell target-cell">90153</div>
+                <div class="num-cell target-cell">28476</div>
+                <div class="num-cell target-cell">53821</div>
+                <div class="num-cell target-cell">74690</div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="label">G2</div>
-    <div class="numbers g2">
-      <div class="number">61204</div>
-      <div class="number">47839</div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="label">G3</div>
-    <div class="numbers g3">
-      <div class="number">90153</div>
-      <div class="number">28476</div>
-      <div class="number">53821</div>
-      <div class="number">74690</div>
-      <div class="number">16348</div>
-      <div class="number">39072</div>
-    </div>
-  </div>
-
+    <button class="btn-action" id="btnToggle" onclick="toggleScan()">BẮT ĐẦU QUAY SỐ</button>
 </div>
 
 <script>
-// LẶN SỐ
-document.getElementById("toggleHide").addEventListener("change", function(e){
-  document.querySelectorAll(".number").forEach(el=>{
-    el.style.filter = e.target.checked ? "blur(6px)" : "none";
-  });
-});
+    const cells = document.querySelectorAll('.target-cell');
+    let currentIndex = 0;
+    let scanInterval = null;
+    let isScanning = false;
 
-// HIỆU ỨNG
-document.getElementById("toggleAnim").addEventListener("change", function(e){
-  document.querySelectorAll(".number").forEach(el=>{
-    if(e.target.checked){
-      el.classList.add("blink");
-    } else {
-      el.classList.remove("blink");
+    function toggleScan() {
+        const btn = document.getElementById('btnToggle');
+        
+        if (!isScanning) {
+            // BẮT ĐẦU CHẠY
+            isScanning = true;
+            btn.innerText = "DỪNG LẠI (CHỐT SỐ)";
+            btn.classList.add('btn-stop');
+            
+            // Xóa chốt cũ nếu có
+            cells.forEach(c => c.classList.remove('active-light'));
+
+            scanInterval = setInterval(() => {
+                // Tắt đèn ô trước đó
+                if(currentIndex > 0) {
+                    cells[currentIndex - 1].classList.remove('active-light');
+                } else if (currentIndex === 0 && cells.length > 0) {
+                    cells[cells.length - 1].classList.remove('active-light');
+                }
+
+                // Bật đèn ô hiện tại
+                cells[currentIndex].classList.add('active-light');
+
+                // Tiến lên ô tiếp theo
+                currentIndex++;
+                if(currentIndex >= cells.length) {
+                    currentIndex = 0; // Quay vòng lại từ đầu
+                }
+            }, 120); // Tốc độ quét 120ms/ô (Nhanh và mượt)
+
+        } else {
+            // DỪNG LẠI TẠI CHỖ (GIẢI LAO / CHỐT SỐ)
+            isScanning = false;
+            clearInterval(scanInterval);
+            btn.innerText = "TIẾP TỤC QUAY";
+            btn.classList.remove('btn-stop');
+            
+            // Đèn sẽ tự động giữ nguyên ở class '.active-light' hiện tại!
+        }
     }
-  });
-});
 </script>
 
 </body>
