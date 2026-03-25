@@ -1,203 +1,250 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xổ Số Tuấn Đức - Bản Diễn Tối Thượng</title>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Xổ Số Miền Bắc - Chuẩn Giao Diện</title>
     <style>
-        /* [1] HIẾN PHÁP TỐI CAO - MOBILE FIRST 420PX */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
-            --bg: #f2f4f7; --card: #ffffff; --text: #1a1a1a; --border: #eceef2;
-            --primary: #d90429; --primary-light: #fff0f2;
-        }
-        body { 
-            font-family: 'Be Vietnam Pro', sans-serif; 
-            background: #111; /* Nền ngoài cho cảm giác App chuyên nghiệp */
-            display: flex; justify-content: center; height: 100vh; overflow: hidden; 
-        }
-        .app-frame { 
-            width: 100%; max-width: 420px; height: 100vh; 
-            background: var(--bg); position: relative; overflow: hidden;
+            --bg-body: #f0f2f5;
+            --bg-card: #ffffff;
+            --text-dark: #1a1a1a;
+            --text-red: #f82649; /* Đỏ hồng chuẩn xác theo ảnh */
+            --border-dashed: #e5e7eb;
+            --gray-light: #f3f4f6;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* [2] BẢNG KẾT QUẢ XỔ SỐ (CENTERED LAYOUT) */
-        .main-board {
-            height: 100%; padding: 15px; padding-top: 20px;
-            overflow-y: auto; padding-bottom: 200px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
-        .header-app { text-align: center; margin-bottom: 15px; }
-        .header-app h1 { font-size: 1.2rem; font-weight: 900; color: var(--primary); text-transform: uppercase; }
-        .header-app p { font-size: 0.8rem; color: #666; font-weight: 700; margin-top: 4px; }
 
-        .result-table { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; }
-        .row { display: flex; border-bottom: 1px solid var(--border); }
-        .row:last-child { border-bottom: none; }
-        .lbl { flex: 0 0 50px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: #555; background: #fafafa; border-right: 1px solid var(--border); }
-        .nums { flex: 1; padding: 10px; display: grid; gap: 8px; align-items: center; }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Container giả lập Mobile */
+        .app-container {
+            width: 100%;
+            max-width: 430px; /* Kích thước tối đa iPhone Pro Max */
+            background-color: var(--bg-body);
+            position: relative;
+            padding-bottom: 100px; /* Nhường chỗ cho Bottom Sheet */
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- HEADER --- */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg-body);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .btn-back {
+            color: var(--text-red);
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            flex: 1;
+        }
+        .header-title {
+            font-size: 16px;
+            font-weight: 800;
+            text-align: center;
+            flex: 2;
+            color: #000;
+        }
+        .header-spacer {
+            flex: 1; /* Cân bằng layout header */
+        }
+
+        /* --- MAIN CARD --- */
+        .main-card {
+            background: var(--bg-card);
+            margin: 0 16px;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        /* Ký hiệu */
+        .ky-hieu {
+            background: var(--gray-light);
+            border-radius: 8px;
+            text-align: center;
+            padding: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #555;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        /* Đường kẻ đứt */
+        .divider {
+            border-bottom: 1px dashed var(--border-dashed);
+            margin: 14px 0;
+        }
+
+        /* Lưới hiển thị các giải */
+        .prize-row {
+            display: grid;
+            text-align: center;
+            align-items: center;
+            grid-row-gap: 12px;
+        }
+
+        .prize-row.col-1 { grid-template-columns: 1fr; }
+        .prize-row.col-2 { grid-template-columns: repeat(2, 1fr); }
+        .prize-row.col-3 { grid-template-columns: repeat(3, 1fr); }
+        .prize-row.col-4 { grid-template-columns: repeat(4, 1fr); }
+
+        /* Typography chữ số */
+        .number {
+            font-weight: 800;
+            font-size: 19px; /* Kích thước chuẩn các giải nhỏ */
+            letter-spacing: 0.5px;
+        }
         
-        /* Layout lưới chuẩn tâm điểm */
-        .g-cen { display: flex; justify-content: center; }
-        .g-2 { grid-template-columns: repeat(2, 1fr); }
-        .g-3 { grid-template-columns: repeat(3, 1fr); }
-        .g-4 { grid-template-columns: repeat(4, 1fr); }
-
-        code.n { 
-            display: inline-flex; justify-content: center; align-items: center;
-            background: #fff; border: 1px solid #ddd; border-radius: 8px;
-            padding: 6px 0; font-family: 'Courier New', monospace; font-size: 16px; font-weight: 800; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        .number-db {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-red);
         }
-        .red-tail { color: var(--primary); font-weight: 900; }
-        
-        .row-db { background: var(--primary-light); }
-        .row-db .lbl { color: var(--primary); border-right-color: #ffb3c1; background: transparent; }
-        .row-db code.n { font-size: 24px; color: var(--primary); border-color: #ffb3c1; padding: 10px 0; width: 100%; }
-        .row-db .red-tail { color: inherit; }
 
-        /* [3] TẤM MÀN THỐNG KÊ (BOTTOM SHEET) */
+        .red-tail {
+            color: var(--text-red);
+        }
+
+        /* --- BOTTOM SHEET --- */
         .bottom-sheet {
-            position: absolute; left: 0; right: 0; bottom: 0;
-            height: 85vh; background: var(--card);
-            border-top-left-radius: 24px; border-top-right-radius: 24px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
-            transform: translateY(75vh); /* Chỉ hở cái thanh nắm và tiêu đề */
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 430px;
+            background: var(--bg-card);
+            border-radius: 24px 24px 0 0;
+            padding: 12px 0 24px 0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            z-index: 100;
         }
-        .bottom-sheet.active { transform: translateY(15vh); }
 
-        /* Handle và Tiêu đề Đỏ */
-        .drag-handle-area { padding: 15px 10px; text-align: center; cursor: pointer; border-bottom: 1px solid var(--border); }
-        .handle-bar { width: 40px; height: 5px; background: #ccc; border-radius: 10px; margin: 0 auto 12px; }
-        .sheet-title { color: var(--primary); font-size: 16px; font-weight: 900; text-transform: uppercase; }
-
-        /* HÀNG THỨ 2 -> CHỦ NHẬT (LINH HỒN CỦA BOSS) */
-        .day-row {
-            display: flex; justify-content: space-between; padding: 15px;
-            background: #fff; border-bottom: 1px solid var(--border);
+        .drag-handle {
+            width: 40px;
+            height: 5px;
+            background: #d1d5db;
+            border-radius: 3px;
+            margin: 0 auto 16px auto;
         }
-        .day-item {
-            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-            border-radius: 12px; background: var(--bg); font-size: 12px; font-weight: 800;
-            color: #555; border: 1px solid var(--border); cursor: pointer; transition: 0.2s;
+
+        .sheet-title {
+            color: var(--text-red);
+            font-size: 16px;
+            font-weight: 800;
         }
-        .day-item.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 10px rgba(217,4,41,0.3); }
-
-        /* Nội dung thống kê */
-        .sheet-content { padding: 20px; overflow-y: auto; height: calc(100% - 130px); background: #fafafa; }
-        .stat-card { background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
-        .stat-card h4 { font-size: 14px; color: var(--primary); margin-bottom: 8px; font-weight: 900; }
-        .stat-card p { font-size: 13px; color: #666; font-weight: 600; line-height: 1.5; }
-
     </style>
 </head>
 <body>
 
-<div class="app-frame">
+<div class="app-container">
     
-    <div class="main-board">
-        <div class="header-app">
-            <h1>Xổ Số Miền Bắc Live</h1>
-            <p>Hà Nội — Thứ Tư — 25/03/2026</p>
+    <header class="header">
+        <div class="btn-back">&larr; TRỞ VỀ</div>
+        <div class="header-title">XỔ SỐ MIỀN BẮC</div>
+        <div class="header-spacer"></div>
+    </header>
+
+    <main class="main-card">
+        
+        <div class="ky-hieu">
+            KÝ HIỆU: 1A - 2B - 3C
         </div>
 
-        <div class="result-table">
-            <div class="row row-db">
-                <div class="lbl">ĐB</div>
-                <div class="nums g-cen"><code class="n">82567</code></div>
-            </div>
-            <div class="row">
-                <div class="lbl">G1</div>
-                <div class="nums g-cen"><code class="n">341<span>95</span></code></div>
-            </div>
-            <div class="row">
-                <div class="lbl">G2</div>
-                <div class="nums g-2">
-                    <code class="n">612<span>04</span></code>
-                    <code class="n">478<span>39</span></code>
-                </div>
-            </div>
-            <div class="row">
-                <div class="lbl">G3</div>
-                <div class="nums g-3">
-                    <code class="n">90153</code><code class="n">28476</code><code class="n">53821</code>
-                    <code class="n">74690</code><code class="n">16348</code><code class="n">39072</code>
-                </div>
-            </div>
-            <div class="row">
-                <div class="lbl">G4</div>
-                <div class="nums g-2"><code class="n">4827</code><code class="n">3160</code><code class="n">9543</code><code class="n">7208</code></div>
-            </div>
-            <div class="row">
-                <div class="lbl">G7</div>
-                <div class="nums g-4"><code class="n">83</code><code class="n">47</code><code class="n">29</code><code class="n">61</code></div>
-            </div>
+        <div class="prize-row col-1">
+            <div class="number-db">12345</div>
         </div>
-    </div>
+        
+        <div class="divider"></div>
 
-    <div class="bottom-sheet" id="statSheet">
-        <div class="drag-handle-area" onclick="toggleSheet()">
-            <div class="handle-bar"></div>
-            <div class="sheet-title">Thống kê Đặc biệt</div>
+        <div class="prize-row col-1">
+            <div class="number">543<span class="red-tail">21</span></div>
+        </div>
+        
+        <div class="divider"></div>
+
+        <div class="prize-row col-2">
+            <div class="number">111<span class="red-tail">11</span></div>
+            <div class="number">222<span class="red-tail">22</span></div>
+        </div>
+        
+        <div class="divider"></div>
+
+        <div class="prize-row col-3">
+            <div class="number">123<span class="red-tail">45</span></div>
+            <div class="number">234<span class="red-tail">56</span></div>
+            <div class="number">345<span class="red-tail">67</span></div>
+            <div class="number">456<span class="red-tail">78</span></div>
+            <div class="number">567<span class="red-tail">89</span></div>
+            <div class="number">678<span class="red-tail">90</span></div>
+        </div>
+        
+        <div class="divider"></div>
+
+        <div class="prize-row col-4">
+            <div class="number">12<span class="red-tail">34</span></div>
+            <div class="number">23<span class="red-tail">45</span></div>
+            <div class="number">34<span class="red-tail">56</span></div>
+            <div class="number">45<span class="red-tail">67</span></div>
+        </div>
+        
+        <div class="divider"></div>
+
+        <div class="prize-row col-3">
+            <div class="number">11<span class="red-tail">11</span></div>
+            <div class="number">22<span class="red-tail">22</span></div>
+            <div class="number">33<span class="red-tail">33</span></div>
+            <div class="number">44<span class="red-tail">44</span></div>
+            <div class="number">55<span class="red-tail">55</span></div>
+            <div class="number">66<span class="red-tail">66</span></div>
+        </div>
+        
+        <div class="divider"></div>
+
+        <div class="prize-row col-3">
+            <div class="number">1<span class="red-tail">23</span></div>
+            <div class="number">4<span class="red-tail">56</span></div>
+            <div class="number">7<span class="red-tail">89</span></div>
+        </div>
+        
+        <div class="divider"></div>
+
+        <div class="prize-row col-4">
+            <div class="number red-tail">01</div>
+            <div class="number red-tail">02</div>
+            <div class="number red-tail">03</div>
+            <div class="number red-tail">04</div>
         </div>
 
-        <div class="day-row">
-            <div class="day-item active">T2</div>
-            <div class="day-item">T3</div>
-            <div class="day-item">T4</div>
-            <div class="day-item">T5</div>
-            <div class="day-item">T6</div>
-            <div class="day-item">T7</div>
-            <div class="day-item">CN</div>
-        </div>
+    </main>
 
-        <div class="sheet-content">
-            <div class="stat-card">
-                <h4>Phân tích nhịp về</h4>
-                <p>Dữ liệu đặc biệt ngày hôm nay có dấu hiệu về lại đầu 8. Nhịp lô gan 25 ngày chưa nổ.</p>
-            </div>
-            <div class="stat-card">
-                <h4>Thống kê tần suất</h4>
-                <p>Cặp số 67-76 đang đứng đầu bảng tần suất xuất hiện trong 30 ngày qua.</p>
-            </div>
-            <div class="stat-card">
-                <h4>Lời khuyên từ AI</h4>
-                <p>Hãy chú trọng vào các dãy số có tổng chẵn cho kỳ quay thưởng tiếp theo.</p>
-            </div>
-        </div>
+    <div class="bottom-sheet">
+        <div class="drag-handle"></div>
+        <div class="sheet-title">BẢNG THỐNG KÊ ĐẶC BIỆT</div>
     </div>
 
 </div>
-
-<script>
-    // 1. Logic đóng mở tấm màn
-    function toggleSheet() {
-        const sheet = document.getElementById('statSheet');
-        sheet.classList.toggle('active');
-        
-        // Haptic Feedback cho Telegram Web App
-        if(window.Telegram && Telegram.WebApp) {
-            Telegram.WebApp.HapticFeedback.impactOccurred('medium');
-        }
-    }
-
-    // 2. Logic chọn Thứ
-    const dayItems = document.querySelectorAll('.day-item');
-    dayItems.forEach(item => {
-        item.addEventListener('click', function() {
-            dayItems.forEach(d => d.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-
-    // Telegram Auto Expand
-    if(window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-    }
-</script>
 
 </body>
 </html>
