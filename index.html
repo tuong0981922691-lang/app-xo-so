@@ -1,212 +1,127 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xổ Số Kính Mờ - Quét Từng Ô</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Xổ Số Miền Bắc Live - V15</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
-        /* Nền Gradient động để khoe hiệu ứng Kính trong suốt */
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #e94560);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            color: #fff;
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --bg: #f2f4f7; --card: #ffffff; --text: #1a1a1a; --border: #eceef2;
+            --primary: #d90429; --primary-bg: #fff0f2;
         }
-        @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
+        body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); display: flex; justify-content: center; min-height: 100vh; }
+        .app { width: 100%; max-width: 420px; background: var(--card); display: flex; flex-direction: column; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
 
-        /* Kỷ luật thép 420px */
-        .app-container {
-            width: 100%;
-            max-width: 420px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        /* HEADER CHUẨN ĐÊM QUA */
+        .header { background: linear-gradient(135deg, #ff1744, #d90429); color: #fff; padding: 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 12px rgba(217,4,41,0.2); }
+        .header h1 { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+        .header p { font-size: 13px; opacity: 0.9; margin-top: 5px; font-weight: 600; }
 
-        /* HEADER KÍNH MỜ */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-        .glass-panel h1 { font-size: 20px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .btn-spin { margin: 15px; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 15px rgba(217,4,41,0.3); transition: 0.2s; }
+        .btn-spin:active { transform: scale(0.97); }
 
-        /* BẢNG KẾT QUẢ */
-        .row {
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px 0;
-        }
+        /* BẢNG KẾT QUẢ TÂM ĐIỂM */
+        .board { padding: 10px; flex: 1; }
+        .row { display: flex; border-bottom: 1px solid var(--border); padding: 8px 0; }
         .row:last-child { border-bottom: none; }
+        .lbl { flex: 0 0 50px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #666; background: #fafafa; border-right: 1px solid var(--border); margin-right: 8px; }
         
-        .prize-name {
-            flex: 0 0 60px;
-            font-size: 14px;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.7);
-        }
+        .nums-grid { flex: 1; display: grid; gap: 8px; }
+        .g-cen { display: flex; justify-content: center; }
+        .g-2 { grid-template-columns: repeat(2, 1fr); }
+        .g-3 { grid-template-columns: repeat(3, 1fr); }
+        .g-4 { grid-template-columns: repeat(4, 1fr); }
 
-        .numbers-grid {
-            flex: 1;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: flex-start;
-        }
+        /* Ô SỐ CHUẨN ĐÊM QUA */
+        .n-group { display: flex; justify-content: center; align-items: center; gap: 2px; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+        .digit { width: 14px; text-align: center; font-family: 'Courier New', monospace; font-size: 18px; font-weight: 900; color: #111; }
+        
+        /* ĐẶC BIỆT CHỐT HẠ */
+        .row-db { background: var(--primary-bg); border: 1.5px solid #ffb3c1; border-radius: 10px; margin-top: 10px; }
+        .row-db .lbl { color: var(--primary); background: transparent; border-right-color: #ffb3c1; }
+        .row-db .n-group { border-color: #ffb3c1; padding: 10px; }
+        .row-db .digit { color: var(--primary); font-size: 26px; width: 20px; }
+        .red-tail { color: var(--primary); }
 
-        /* Ô SỐ ĐỘ TRONG TÚY (KÍNH MỜ) */
-        .num-cell {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            color: #fff;
-            transition: all 0.15s ease-in-out;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        /* ĐIỂM CHẾT: ĐÈN CHẠY TỪNG Ô */
-        .active-light {
-            background: rgba(255, 215, 0, 0.8) !important; /* Vàng chói */
-            color: #000 !important;
-            border-color: #ffd700 !important;
-            transform: scale(1.15) translateY(-2px);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), inset 0 0 10px #fff;
-            z-index: 10;
-        }
-
-        /* Đặc biệt to hơn */
-        .row-db .num-cell { font-size: 24px; letter-spacing: 4px; padding: 10px 18px; color: #ff4d4d; border-color: rgba(255,77,77,0.4); }
-
-        /* NÚT ĐIỀU KHIỂN */
-        .btn-action {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 900;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-        }
-        .btn-action:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
-        .btn-stop { background: rgba(233, 69, 96, 0.6); border-color: #e94560; }
-
+        /* ĐÈN CHẠY LIVE */
+        .running { background: #ffeaa7 !important; transform: scale(1.03); border-color: #fdcb6e !important; }
     </style>
 </head>
 <body>
-
-<div class="app-container">
-    <div class="glass-panel">
-        <h1>MIỀN BẮC LIVE</h1>
-        <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Giao diện Kính & Đèn rọi từng ô</p>
+<div class="app">
+    <div class="header">
+        <h1>KẾT QUẢ XỔ SỐ MIỀN BẮC</h1>
+        <p id="dateDisplay">Hà Nội - Thứ Tư - 25/03/2026</p>
     </div>
+    
+    <button class="btn-spin" onclick="startBroadcasting()">▶ BẮT ĐẦU QUAY THƯỞNG</button>
 
-    <div class="glass-panel" style="padding: 10px 20px;">
-        <div class="row row-db">
-            <div class="prize-name">ĐB</div>
-            <div class="numbers-grid">
-                <div class="num-cell target-cell">82567</div>
-            </div>
+    <div class="board" id="mainBoard">
         </div>
-        <div class="row">
-            <div class="prize-name">G1</div>
-            <div class="numbers-grid">
-                <div class="num-cell target-cell">34195</div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="prize-name">G2</div>
-            <div class="numbers-grid">
-                <div class="num-cell target-cell">61204</div>
-                <div class="num-cell target-cell">47839</div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="prize-name">G3</div>
-            <div class="numbers-grid">
-                <div class="num-cell target-cell">90153</div>
-                <div class="num-cell target-cell">28476</div>
-                <div class="num-cell target-cell">53821</div>
-                <div class="num-cell target-cell">74690</div>
-            </div>
-        </div>
-    </div>
-
-    <button class="btn-action" id="btnToggle" onclick="toggleScan()">BẮT ĐẦU QUAY SỐ</button>
 </div>
 
 <script>
-    const cells = document.querySelectorAll('.target-cell');
-    let currentIndex = 0;
-    let scanInterval = null;
-    let isScanning = false;
+    const structure = { g1:1, g2:2, g3:6, g4:4, g5:6, g6:3, g7:4, db:1 };
+    const mockData = {
+        g1:["34195"], g2:["61204","47839"], g3:["90153","28476","53821","74690","16348","39072"],
+        g4:["4827","3160","9543","7208"], g5:["1374","6089","4251","8736","2940","5617"],
+        g6:["392","748","165"], g7:["83","47","29","61"], db:["82567"]
+    };
 
-    function toggleScan() {
-        const btn = document.getElementById('btnToggle');
-        
-        if (!isScanning) {
-            // BẮT ĐẦU CHẠY
-            isScanning = true;
-            btn.innerText = "DỪNG LẠI (CHỐT SỐ)";
-            btn.classList.add('btn-stop');
+    function initBoard() {
+        const b = document.getElementById('mainBoard');
+        let h = '';
+        for (let k in structure) {
+            let gc = 'g-cen';
+            if(structure[k]===2||structure[k]===4) gc = 'g-2';
+            if(structure[k]===3||structure[k]===6) gc = 'g-3';
+            if(k==='g7') gc = 'g-4';
             
-            // Xóa chốt cũ nếu có
-            cells.forEach(c => c.classList.remove('active-light'));
-
-            scanInterval = setInterval(() => {
-                // Tắt đèn ô trước đó
-                if(currentIndex > 0) {
-                    cells[currentIndex - 1].classList.remove('active-light');
-                } else if (currentIndex === 0 && cells.length > 0) {
-                    cells[cells.length - 1].classList.remove('active-light');
-                }
-
-                // Bật đèn ô hiện tại
-                cells[currentIndex].classList.add('active-light');
-
-                // Tiến lên ô tiếp theo
-                currentIndex++;
-                if(currentIndex >= cells.length) {
-                    currentIndex = 0; // Quay vòng lại từ đầu
-                }
-            }, 120); // Tốc độ quét 120ms/ô (Nhanh và mượt)
-
-        } else {
-            // DỪNG LẠI TẠI CHỖ (GIẢI LAO / CHỐT SỐ)
-            isScanning = false;
-            clearInterval(scanInterval);
-            btn.innerText = "TIẾP TỤC QUAY";
-            btn.classList.remove('btn-stop');
-            
-            // Đèn sẽ tự động giữ nguyên ở class '.active-light' hiện tại!
+            let rowClass = k==='db' ? 'row row-db' : 'row';
+            let boxes = '';
+            for(let i=0; i<structure[k]; i++) {
+                let dots = k==='g7'?'--':(k==='g6'?'---':(k==='g4'||k==='g5'?'----':'-----'));
+                boxes += `<div class="n-group" id="${k}-${i}">${dots.split('').map(d=>`<span class="digit">${d}</span>`).join('')}</div>`;
+            }
+            h += `<div class="${rowClass}"><div class="lbl">${k.toUpperCase()}</div><div class="nums-grid ${gc}">${boxes}</div></div>`;
         }
+        b.innerHTML = h;
     }
-</script>
 
+    function startBroadcasting() {
+        const order = ["g1","g2","g3","g4","g5","g6","g7","db"];
+        order.forEach((k, idx) => {
+            setTimeout(() => {
+                const groupCount = structure[k];
+                for(let i=0; i<groupCount; i++) {
+                    const target = document.getElementById(`${k}-${i}`);
+                    const finalVal = mockData[k][i];
+                    spinEffect(target, finalVal);
+                }
+            }, idx * 1200);
+        });
+    }
+
+    function spinEffect(el, val) {
+        el.classList.add('running');
+        const digits = el.querySelectorAll('.digit');
+        digits.forEach((d, i) => {
+            let count = 0;
+            const scroll = setInterval(() => {
+                d.innerText = Math.floor(Math.random()*10);
+                count++;
+                if(count > 10 + (i*5)) {
+                    clearInterval(scroll);
+                    d.innerText = val[i];
+                    if(i >= val.length-2) d.classList.add('red-tail');
+                    if(i === val.length-1) el.classList.remove('running');
+                }
+            }, 50);
+        });
+    }
+    initBoard();
+</script>
 </body>
 </html>
