@@ -1,250 +1,171 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xổ Số Miền Bắc - Chuẩn Giao Diện</title>
-    <style>
-        :root {
-            --bg-body: #f0f2f5;
-            --bg-card: #ffffff;
-            --text-dark: #1a1a1a;
-            --text-red: #f82649; /* Đỏ hồng chuẩn xác theo ảnh */
-            --border-dashed: #e5e7eb;
-            --gray-light: #f3f4f6;
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Xổ Số Phạm Lê Hoàng Tuấn Đức</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
 
-        body {
-            font-family: var(--font-main);
-            background-color: var(--bg-body);
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
+<style>
+/* =========================================
+   [CSS-BASE] Khung App Chuẩn
+   ========================================= */
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:'Be Vietnam Pro', sans-serif; background:#f2f3f5; min-height:100vh; display:flex; justify-content:center; }
+.app { width:100%; max-width:420px; min-height:100vh; padding:16px; display:flex; flex-direction:column; position:relative; overflow:hidden;}
+.page { display:none; flex-direction:column; flex:1; }
+.page.active { display:flex; }
 
-        /* Container giả lập Mobile */
-        .app-container {
-            width: 100%;
-            max-width: 430px; /* Kích thước tối đa iPhone Pro Max */
-            background-color: var(--bg-body);
-            position: relative;
-            padding-bottom: 100px; /* Nhường chỗ cho Bottom Sheet */
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
-        }
+/* =========================================
+   [CSS-HOME] Trang Chủ
+   ========================================= */
+.header { text-align:center; margin-bottom:24px; background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.message-line { font-size:16px; font-weight:800; color:#d90429; line-height:1.4; }
+.button-group { display:flex; flex-direction:column; gap:16px; }
+.button { width:100%; min-height:56px; padding:10px; border:none; border-radius:14px; font-size:15px; font-weight:800; background:linear-gradient(135deg, #ff1744, #d90429); color:#fff; box-shadow:0 4px 10px rgba(217,4,41,0.2); transition:transform 0.1s; }
+.button:active { transform:scale(0.97); }
 
-        /* --- HEADER --- */
-        .header {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            background: var(--bg-body);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .btn-back {
-            color: var(--text-red);
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            flex: 1;
-        }
-        .header-title {
-            font-size: 16px;
-            font-weight: 800;
-            text-align: center;
-            flex: 2;
-            color: #000;
-        }
-        .header-spacer {
-            flex: 1; /* Cân bằng layout header */
-        }
+/* =========================================
+   [CSS-DRAW] Kết Quả Miền Bắc 27 Dòng
+   ========================================= */
+.mb-result { background:#fff; padding:12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.06); margin-bottom:16px; }
+.prize-row { display:grid; gap:8px; margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #eee; }
+.prize-row:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
 
-        /* --- MAIN CARD --- */
-        .main-card {
-            background: var(--bg-card);
-            margin: 0 16px;
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
+.grid-1 { grid-template-columns: 1fr; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
 
-        /* Ký hiệu */
-        .ky-hieu {
-            background: var(--gray-light);
-            border-radius: 8px;
-            text-align: center;
-            padding: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            color: #555;
-            letter-spacing: 1px;
-            margin-bottom: 16px;
-        }
+.ma-db-style { text-align:center; font-size:15px; font-weight:800; color:#555; letter-spacing:2px; margin-bottom:6px; padding:4px; background:#f8f9fa; border-radius:6px; }
 
-        /* Đường kẻ đứt */
-        .divider {
-            border-bottom: 1px dashed var(--border-dashed);
-            margin: 14px 0;
-        }
+.num-box { font-variant-numeric: tabular-nums; font-weight: 900; font-size: 20px; text-align: center; color: #111; letter-spacing: 1px; }
+.num-box.db { font-size: 30px; color: #d90429; text-shadow: 1px 1px 2px rgba(217,4,41,0.2); }
+.last-two { color: #ff1744; }
 
-        /* Lưới hiển thị các giải */
-        .prize-row {
-            display: grid;
-            text-align: center;
-            align-items: center;
-            grid-row-gap: 12px;
-        }
+/* =========================================
+   [CSS-STATS] Bottom Sheet & Ruột Thống Kê VIP
+   ========================================= */
+.bottom-sheet { 
+    position:absolute; bottom:0; left:0; width:100%; 
+    height: 90vh; 
+    background:#ffffff; border-radius:24px 24px 0 0; 
+    box-shadow:0 -10px 25px rgba(0,0,0,0.2); 
+    transition:transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); 
+    z-index:999; display:flex; flex-direction:column; 
+    transform:translateY(calc(100% - 60px)); 
+}
+.bottom-sheet.active { transform:translateY(0); }
+.drag-handle { width:50px; height:6px; background:#ccc; border-radius:10px; margin:15px auto; cursor:pointer; }
+.sheet-title { text-align:center; font-weight:900; color:#d90429; font-size:16px; margin-bottom:5px; text-transform:uppercase; }
 
-        .prize-row.col-1 { grid-template-columns: 1fr; }
-        .prize-row.col-2 { grid-template-columns: repeat(2, 1fr); }
-        .prize-row.col-3 { grid-template-columns: repeat(3, 1fr); }
-        .prize-row.col-4 { grid-template-columns: repeat(4, 1fr); }
-
-        /* Typography chữ số */
-        .number {
-            font-weight: 800;
-            font-size: 19px; /* Kích thước chuẩn các giải nhỏ */
-            letter-spacing: 0.5px;
-        }
-        
-        .number-db {
-            font-size: 32px;
-            font-weight: 900;
-            color: var(--text-red);
-        }
-
-        .red-tail {
-            color: var(--text-red);
-        }
-
-        /* --- BOTTOM SHEET --- */
-        .bottom-sheet {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 430px;
-            background: var(--bg-card);
-            border-radius: 24px 24px 0 0;
-            padding: 12px 0 24px 0;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-            text-align: center;
-            z-index: 100;
-        }
-
-        .drag-handle {
-            width: 40px;
-            height: 5px;
-            background: #d1d5db;
-            border-radius: 3px;
-            margin: 0 auto 16px auto;
-        }
-
-        .sheet-title {
-            color: var(--text-red);
-            font-size: 16px;
-            font-weight: 800;
-        }
-    </style>
+/* CSS do BOSS cung cấp đã được đổ bê tông */
+.stats-container { width: 100%; max-width: 100%; background: #ffffff; font-size: 11px; overflow-x: hidden; display: flex; flex-direction: column; flex: 1; overflow-y: hidden; }
+.stats-header { display: grid; grid-template-columns: repeat(7, 1fr); background: #f8f9fa; border-bottom: 2px solid #d90429; font-weight: 900; text-align: center; padding: 12px 0; color: #111; position: sticky; top: 0; z-index: 10; }
+.stats-body { display: flex; flex-direction: column; overflow-y: auto; flex: 1; padding-bottom: 30px; }
+.stats-row { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid #eee; }
+.stats-cell { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-right: 1px solid #eee; font-weight: 900; font-variant-numeric: tabular-nums; letter-spacing: 0px; }
+.stats-cell:last-child { border-right: none; }
+.num-head { color: #555; }
+.num-tail { color: #ff1744; text-shadow: 0 0 1px rgba(255,23,68,0.3); }
+.stats-cell.empty { background: #fafafa; }
+</style>
 </head>
+
 <body>
+<div class="app">
 
-<div class="app-container">
-    
-    <header class="header">
-        <div class="btn-back">&larr; TRỞ VỀ</div>
-        <div class="header-title">XỔ SỐ MIỀN BẮC</div>
-        <div class="header-spacer"></div>
-    </header>
-
-    <main class="main-card">
-        
-        <div class="ky-hieu">
-            KÝ HIỆU: 1A - 2B - 3C
+    <div id="page-home" class="page active">
+        <div class="header">
+            <div class="message-line" id="messageLine">ĐANG TẢI DỮ LIỆU...</div>
         </div>
-
-        <div class="prize-row col-1">
-            <div class="number-db">12345</div>
+        <div class="button-group">
+            <button class="button" onclick="openDrawPage()">TRỰC TIẾP KẾT QUẢ XỔ SỐ</button>
         </div>
-        
-        <div class="divider"></div>
-
-        <div class="prize-row col-1">
-            <div class="number">543<span class="red-tail">21</span></div>
-        </div>
-        
-        <div class="divider"></div>
-
-        <div class="prize-row col-2">
-            <div class="number">111<span class="red-tail">11</span></div>
-            <div class="number">222<span class="red-tail">22</span></div>
-        </div>
-        
-        <div class="divider"></div>
-
-        <div class="prize-row col-3">
-            <div class="number">123<span class="red-tail">45</span></div>
-            <div class="number">234<span class="red-tail">56</span></div>
-            <div class="number">345<span class="red-tail">67</span></div>
-            <div class="number">456<span class="red-tail">78</span></div>
-            <div class="number">567<span class="red-tail">89</span></div>
-            <div class="number">678<span class="red-tail">90</span></div>
-        </div>
-        
-        <div class="divider"></div>
-
-        <div class="prize-row col-4">
-            <div class="number">12<span class="red-tail">34</span></div>
-            <div class="number">23<span class="red-tail">45</span></div>
-            <div class="number">34<span class="red-tail">56</span></div>
-            <div class="number">45<span class="red-tail">67</span></div>
-        </div>
-        
-        <div class="divider"></div>
-
-        <div class="prize-row col-3">
-            <div class="number">11<span class="red-tail">11</span></div>
-            <div class="number">22<span class="red-tail">22</span></div>
-            <div class="number">33<span class="red-tail">33</span></div>
-            <div class="number">44<span class="red-tail">44</span></div>
-            <div class="number">55<span class="red-tail">55</span></div>
-            <div class="number">66<span class="red-tail">66</span></div>
-        </div>
-        
-        <div class="divider"></div>
-
-        <div class="prize-row col-3">
-            <div class="number">1<span class="red-tail">23</span></div>
-            <div class="number">4<span class="red-tail">56</span></div>
-            <div class="number">7<span class="red-tail">89</span></div>
-        </div>
-        
-        <div class="divider"></div>
-
-        <div class="prize-row col-4">
-            <div class="number red-tail">01</div>
-            <div class="number red-tail">02</div>
-            <div class="number red-tail">03</div>
-            <div class="number red-tail">04</div>
-        </div>
-
-    </main>
-
-    <div class="bottom-sheet">
-        <div class="drag-handle"></div>
-        <div class="sheet-title">BẢNG THỐNG KÊ ĐẶC BIỆT</div>
     </div>
 
+    <div id="page-draw" class="page">
+        <div style="display:flex; justify-content:space-between; margin-bottom:16px; align-items:center;">
+            <button onclick="goHome()" style="border:none; background:none; color:#d90429; font-weight:800; font-size:15px;">← TRỞ VỀ</button>
+            <strong style="color:#111; font-size:16px;">XỔ SỐ MIỀN BẮC</strong>
+            <div style="width:60px;"></div>
+        </div>
+
+        <div class="mb-result" id="result-board">
+            <div class="ma-db-style" id="ma-db">KÝ HIỆU: 1A - 2B - 3C</div>
+            <div class="prize-row grid-1"><div class="num-box db" id="prize-db">123<span class="last-two">45</span></div></div>
+            <div class="prize-row grid-1"><div class="num-box">543<span class="last-two">21</span></div></div>
+            <div class="prize-row grid-2"><div class="num-box">111<span class="last-two">11</span></div><div class="num-box">222<span class="last-two">22</span></div></div>
+            <div class="prize-row grid-3"><div class="num-box">123<span class="last-two">45</span></div><div class="num-box">234<span class="last-two">56</span></div><div class="num-box">345<span class="last-two">67</span></div><div class="num-box">456<span class="last-two">78</span></div><div class="num-box">567<span class="last-two">89</span></div><div class="num-box">678<span class="last-two">90</span></div></div>
+            <div class="prize-row grid-4"><div class="num-box">12<span class="last-two">34</span></div><div class="num-box">23<span class="last-two">45</span></div><div class="num-box">34<span class="last-two">56</span></div><div class="num-box">45<span class="last-two">67</span></div></div>
+            <div class="prize-row grid-3"><div class="num-box">11<span class="last-two">11</span></div><div class="num-box">22<span class="last-two">22</span></div><div class="num-box">33<span class="last-two">33</span></div><div class="num-box">44<span class="last-two">44</span></div><div class="num-box">55<span class="last-two">55</span></div><div class="num-box">66<span class="last-two">66</span></div></div>
+            <div class="prize-row grid-3"><div class="num-box">1<span class="last-two">23</span></div><div class="num-box">4<span class="last-two">56</span></div><div class="num-box">7<span class="last-two">89</span></div></div>
+            <div class="prize-row grid-4"><div class="num-box last-two">01</div><div class="num-box last-two">02</div><div class="num-box last-two">03</div><div class="num-box last-two">04</div></div>
+        </div>
+
+        <div class="bottom-sheet" id="bottomSheet">
+            <div class="drag-handle"></div>
+            <div class="sheet-title">BẢNG THỐNG KÊ ĐẶC BIỆT</div>
+            
+            <div class="stats-container">
+                <div class="stats-header">
+                    <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div>
+                </div>
+                
+                <div class="stats-body">
+                    <div class="stats-row">
+                        <div class="stats-cell"><span class="num-head">123</span><span class="num-tail">45</span></div>
+                        <div class="stats-cell"><span class="num-head">678</span><span class="num-tail">90</span></div>
+                        <div class="stats-cell"><span class="num-head">543</span><span class="num-tail">21</span></div>
+                        <div class="stats-cell"><span class="num-head">987</span><span class="num-tail">65</span></div>
+                        <div class="stats-cell"><span class="num-head">112</span><span class="num-tail">23</span></div>
+                        <div class="stats-cell"><span class="num-head">445</span><span class="num-tail">56</span></div>
+                        <div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-cell"><span class="num-head">990</span><span class="num-tail">12</span></div>
+                        <div class="stats-cell"><span class="num-head">334</span><span class="num-tail">45</span></div>
+                        <div class="stats-cell"><span class="num-head">556</span><span class="num-tail">67</span></div>
+                        <div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div>
+                        <div class="stats-cell"><span class="num-head">112</span><span class="num-tail">34</span></div>
+                        <div class="stats-cell empty">-</div>
+                        <div class="stats-cell empty">-</div>
+                    </div>
+                    <div class="stats-row"><div class="stats-cell"><span class="num-head">123</span><span class="num-tail">45</span></div><div class="stats-cell"><span class="num-head">678</span><span class="num-tail">90</span></div><div class="stats-cell"><span class="num-head">543</span><span class="num-tail">21</span></div><div class="stats-cell"><span class="num-head">987</span><span class="num-tail">65</span></div><div class="stats-cell"><span class="num-head">112</span><span class="num-tail">23</span></div><div class="stats-cell"><span class="num-head">445</span><span class="num-tail">56</span></div><div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div></div>
+                    <div class="stats-row"><div class="stats-cell"><span class="num-head">123</span><span class="num-tail">45</span></div><div class="stats-cell"><span class="num-head">678</span><span class="num-tail">90</span></div><div class="stats-cell"><span class="num-head">543</span><span class="num-tail">21</span></div><div class="stats-cell"><span class="num-head">987</span><span class="num-tail">65</span></div><div class="stats-cell"><span class="num-head">112</span><span class="num-tail">23</span></div><div class="stats-cell"><span class="num-head">445</span><span class="num-tail">56</span></div><div class="stats-cell"><span class="num-head">778</span><span class="num-tail">89</span></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<script>
+if(window.Telegram && Telegram.WebApp){ Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+
+const greetings = [
+    "Xin chào các cô, các chú, các anh, các chị!",
+    "Hôm nay vận đỏ, Tuấn Đức chúc anh em trúng lớn!",
+    "Thầy giáo Tuấn Đức chốt số, anh em vào xem ngay!",
+    "Sẵn sàng chưa? Kênh Phạm Lê Hoàng Tuấn Đức chuẩn bị mở thưởng!"
+];
+document.getElementById("messageLine").innerText = greetings[Math.floor(Math.random() * greetings.length)];
+
+function openDrawPage() { document.getElementById('page-home').classList.remove('active'); document.getElementById('page-draw').classList.add('active'); }
+function goHome() { document.getElementById('page-draw').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
+
+// CƠ CHẾ VUỐT
+const sheet = document.getElementById('bottomSheet');
+let startY;
+sheet.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
+sheet.addEventListener('touchmove', (e) => {
+    let currentY = e.touches[0].clientY;
+    if (startY - currentY > 40) { sheet.classList.add('active'); } 
+    else if (currentY - startY > 40) { sheet.classList.remove('active'); } 
+});
+document.querySelector('.drag-handle').addEventListener('click', () => { sheet.classList.toggle('active'); });
+
+</script>
 </body>
 </html>
