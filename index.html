@@ -1,320 +1,325 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xổ Số Tuấn Đức - Bản Diễn Tối Thượng V2</title>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>Super App Xổ Số V9 - Tần Suất Lô</title>
     <style>
-        /* [1] HIẾN PHÁP TỐI CAO - MOBILE FIRST 420PX */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        :root {
-            --bg: #f0f2f5; 
-            --card: #ffffff; 
-            --text: #1a1a1a; 
-            --border: #e4e6eb;
-            --primary: #d90429; 
-            --primary-glow: rgba(217, 4, 41, 0.4);
-            --primary-light: #fff0f2;
-            --btn-bg: #f5f7fa;
-            --btn-shadow: 3px 3px 6px #d9dce0, -3px -3px 6px #ffffff; /* Hiệu ứng nổi 3D */
-            --btn-inner: inset 1px 1px 2px rgba(255,255,255,0.8); /* Ánh điện viền trắng */
-        }
-        body { 
-            font-family: 'Be Vietnam Pro', sans-serif; 
-            background: #111; 
-            display: flex; justify-content: center; height: 100vh; overflow: hidden; 
-        }
-        .app-frame { 
-            width: 100%; max-width: 420px; height: 100vh; 
-            background: var(--bg); position: relative; overflow: hidden;
+        /* RESET & XÓA THANH CUỘN */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; scrollbar-width: none; }
+        *::-webkit-scrollbar { display: none; }
+        body { background-color: #0a0a0a; display: flex; justify-content: center; align-items: flex-start; height: 100vh; overflow: hidden; width: 100vw; }
+
+        /* BIẾN MÀU SẮC (SÁNG) */
+        .app-wrapper {
+            --bg-main: #ffffff; --bg-board: #f0f2f5; --text-main: #222222; --border-color: #dddddd;
+            --db-bg: #d40000; --db-text: #ffffff; --led-color: #00e676; --led-bg: #111111;
+            --sheet-bg: #f8f9fa; --block-text: #333333;
+            /* Màu Ma trận Tần suất */
+            --cell-bg: #ffffff; --cell-border: #e0e0e0; 
+            --sticky-bg: #eeeeee; --sticky-text: #d40000;
+            --block-bg: #ffffff;
         }
 
-        /* [2] BỐ CỤC CHÍNH */
-        .main-board {
-            height: 100%; padding: 12px; padding-top: 20px;
-            overflow-y: auto; padding-bottom: 200px;
+        /* DARK MODE */
+        #toggle-dark:checked ~ .app-wrapper {
+            --bg-main: #121212; --bg-board: #1a1a1a; --text-main: #eeeeee; --border-color: #333333; --sheet-bg: #111111; --block-text: #dddddd;
+            /* Màu Ma trận Tần suất (Tối) */
+            --cell-bg: #1e1e1e; --cell-border: #333333; 
+            --sticky-bg: #2a2a2a; --sticky-text: #ff5252;
+            --block-bg: #1a1a1a;
         }
-        .header-app { text-align: center; margin-bottom: 15px; }
-        .header-app h1 { font-size: 1.3rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
-        .header-app p { font-size: 0.85rem; color: #555; font-weight: 700; margin-top: 4px; }
 
-        /* [3] BẢNG KẾT QUẢ - BỌC THÉP */
-        .result-table { 
-            background: var(--card); 
-            border-radius: 16px; 
-            border: 1px solid #fff; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06); 
-            overflow: hidden; 
-        }
-        .row { display: flex; border-bottom: 1px solid var(--border); }
-        .row:last-child { border-bottom: none; }
+        /* KHUNG APP 480PX */
+        .app-wrapper { max-width: 480px; width: 100%; height: 100%; position: relative; background-color: var(--bg-main); color: var(--text-main); overflow: hidden; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
+
+        /* LỚP 1: GIAO DIỆN CHÍNH (ĐÓNG BĂNG NHƯ CŨ) */
+        .main-layer { width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--bg-board); }
+        .top-controls { display: flex; justify-content: flex-end; gap: 15px; padding: 10px 16px; background: var(--bg-main); border-bottom: 1px solid var(--border-color); z-index: 5; }
+        .switch-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .switch-label-text { font-size: 10px; font-weight: bold; color: var(--text-main); }
+        .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--db-bg); }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        .boards-feed { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 20px; }
+        .board { background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color); padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .board-header { text-align: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-color); }
+        .board-title { font-size: 16px; font-weight: 900; color: var(--text-main); text-transform: uppercase; }
+        .board-title.live { color: var(--db-bg); }
+        .status-blink { font-size: 12px; color: var(--db-bg); animation: blink 1s infinite; font-weight: bold; margin-top: 4px; }
+        .board-date { font-size: 12px; color: #888; font-style: italic; margin-top: 4px; font-weight: bold; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .row { display: flex; margin-bottom: 6px; align-items: stretch; gap: 6px; }
+        .prize-name { width: 38px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; background: var(--bg-board); border: 1px solid var(--border-color); border-radius: 4px; }
+        .prize-name.db { background: var(--db-bg); color: var(--db-text); border: none; }
+        .prize-name.active-led { background: var(--led-bg); color: var(--led-color); border-color: var(--led-color); box-shadow: 0 0 8px var(--led-color); }
+
+        .prize-results { flex-grow: 1; display: grid; gap: 4px; }
+        .grid-1 { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: repeat(3, 1fr); } .grid-4 { grid-template-columns: repeat(4, 1fr); } .grid-6 { grid-template-columns: repeat(6, 1fr); }
+
+        .number-box { background: var(--bg-main); border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; border-radius: 4px; height: 30px; position: relative; overflow: hidden; }
+        .number-text { font-size: 15px; font-weight: bold; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; white-space: nowrap; width: 100%;}
+        .grid-6 .number-text, .grid-4 .number-text { font-size: 13px; letter-spacing: 0; } 
+        .row-db .number-box { height: 46px; } .row-db .number-text { font-size: 26px; color: var(--db-bg); letter-spacing: 5px; z-index: 1; }
+
+        .dots-wrapper { display: flex; justify-content: center; align-items: center; gap: 3px; width: 100%; }
+        .dot { width: 5px; height: 5px; background-color: #aaa; border-radius: 50%; animation: wave 1.2s infinite ease-in-out; }
+        .dot:nth-child(2) { animation-delay: -1.1s; } .dot:nth-child(3) { animation-delay: -1.0s; } .dot:nth-child(4) { animation-delay: -0.9s; } .dot:nth-child(5) { animation-delay: -0.8s; }
+        @keyframes wave { 0%, 40%, 100% { transform: translateY(0); opacity: 0.5; } 20% { transform: translateY(-3px); opacity: 1; } }
+
+        .lan-so-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
+        #toggle-mask:checked ~ .app-wrapper .lan-so-wrapper { display: block; }
+        .scroll-mask { width: 100%; height: 100%; overflow-x: auto; direction: rtl; scroll-snap-type: x mandatory; }
+        .scroll-content { width: 200%; height: 100%; display: flex; }
+        .transparent-space { width: 50%; height: 100%; scroll-snap-align: start; }
+        .solid-cover { width: 50%; height: 100%; scroll-snap-align: start; background: linear-gradient(90deg, #37474f, #546e7a); display: flex; align-items: center; justify-content: flex-start; border-left: 3px solid #ffca28; box-shadow: -5px 0 15px rgba(0,0,0,0.5); direction: ltr; }
+        .drag-arrow { color: #ffca28; font-size: 12px; font-weight: bold; padding-left: 10px; animation: bounceLeft 1s infinite alternate; white-space: nowrap; }
+        @keyframes bounceLeft { 0% { transform: translateX(5px); } 100% { transform: translateX(-5px); } }
+
+        .ai-sticky-bar { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-top: 1px solid #90caf9; padding: 12px 16px; display: flex; align-items: center; gap: 10px; z-index: 10; padding-bottom: 25px; }
+        .ai-marquee { flex-grow: 1; overflow: hidden; white-space: nowrap; font-size: 13px; font-weight: bold; color: #1565c0; }
+        .ai-input { padding: 6px 12px; border-radius: 20px; border: 1px solid #90caf9; font-size: 12px; width: 120px; outline: none; }
+        .load-more-text { text-align: center; font-size: 12px; color: #888; padding: 20px 0; font-style: italic; }
+
+        /* LỚP 2 & 3 (SHEETS) */
+        .top-sheet, .bottom-sheet { position: absolute; left: 0; width: 100%; height: 100%; background: var(--sheet-bg); z-index: 20; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column;}
+        .top-sheet { top: 0; transform: translateY(-100%); }
+        .top-tab { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); background: linear-gradient(180deg, #1976d2, #1565c0); color: white; padding: 6px 20px; font-size: 12px; font-weight: 900; text-transform: uppercase; border-radius: 0 0 12px 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid #0d47a1; border-top: none; z-index: 25; }
+        #toggle-top:checked ~ .app-wrapper .top-sheet { transform: translateY(0); }
+
+        .bottom-sheet { bottom: 0; transform: translateY(100%); }
+        .bottom-tab { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); background: linear-gradient(0deg, #d32f2f, #c62828); color: white; padding: 6px 20px; font-size: 12px; font-weight: 900; text-transform: uppercase; border-radius: 12px 12px 0 0; cursor: pointer; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); border: 2px solid #b71c1c; border-bottom: none; z-index: 25; }
+        #toggle-bottom:checked ~ .app-wrapper .bottom-sheet { transform: translateY(0); }
+
+        .sheet-header { padding: 16px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); background: var(--bg-main); }
+        .btn-back { background: #f0f0f0; color: #333; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; margin-right: 15px; }
+        .sheet-title { font-size: 16px; font-weight: bold; color: var(--text-main); }
         
-        /* CỘT LABEL (G1 -> G7) VỚI HIỆU ỨNG NỔI 3D VÀ ÁNH ĐIỆN */
-        .lbl { 
-            flex: 0 0 55px; display: flex; align-items: center; justify-content: center; 
-            font-size: 12px; font-weight: 900; color: #666; 
-            background: var(--btn-bg); 
-            border-right: 1px solid var(--border);
-            /* Bịt vá: Thêm hiệu ứng nổi nhẹ cho cột dọc */
-            box-shadow: inset -2px 0 5px rgba(0,0,0,0.02);
-            position: relative;
+        /* =========================================
+           KHÔNG GIAN 3: THIẾT KẾ MA TRẬN LÔ TÔ (BỐ CỤC 1)
+           ========================================= */
+        .sheet-content-loto { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+        
+        /* Khối 1 mở rộng để chứa bảng */
+        .loto-block-1 {
+            flex: 2; /* Chiếm nhiều diện tích hơn Khối 2, 3 */
+            border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            background: var(--block-bg); border: 1px solid var(--border-color);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .block-title-bar { background: linear-gradient(90deg, #d40000, #ff5252); color: #fff; padding: 8px 12px; font-weight: bold; font-size: 14px; text-transform: uppercase; }
+
+        /* Bảng Ma Trận 101 Hàng x 30 Cột */
+        .matrix-container {
+            flex: 1; overflow: auto; /* Cho phép vuốt ngang, vuốt dọc */
+            -webkit-overflow-scrolling: touch; /* Vuốt mượt trên iOS */
+            background: var(--cell-bg);
         }
         
-        /* HIỆU ỨNG GLOW (SÁNG ĐÈN KHI QUAY THƯỞNG) */
-        .lbl.active-glow {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 0 15px var(--primary-glow), inset 2px 2px 5px rgba(255,255,255,0.4);
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-            border-right: none;
-            animation: pulse-red 1.5s infinite;
-        }
-
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 var(--primary-glow), inset 2px 2px 5px rgba(255,255,255,0.4); }
-            70% { box-shadow: 0 0 10px 5px transparent, inset 2px 2px 5px rgba(255,255,255,0.4); }
-            100% { box-shadow: 0 0 0 0 transparent, inset 2px 2px 5px rgba(255,255,255,0.4); }
-        }
-
-        /* KHU VỰC CHỨA SỐ */
-        .nums { flex: 1; padding: 10px; display: grid; gap: 8px; align-items: center; background: #fff; }
+        .matrix-table { border-collapse: collapse; table-layout: fixed; }
         
-        /* Bịt vá Grid: Cân đối không bị cắt chữ */
-        .g-cen { display: flex; justify-content: center; width: 100%; }
-        .g-2 { grid-template-columns: repeat(2, 1fr); }
-        .g-3 { grid-template-columns: repeat(3, 1fr); }
-        .g-4 { grid-template-columns: repeat(4, 1fr); }
-
-        /* Ô SỐ BỌC THÉP */
-        code.n { 
-            display: flex; justify-content: center; align-items: center;
-            background: #fff; border: 1px solid #eaeaea; border-radius: 8px;
-            padding: 8px 4px; /* Fix lỗi cắt viền */
-            font-family: 'Courier New', monospace; font-size: 16px; font-weight: 900; 
-            color: #222;
-            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.02); /* Lõm nhẹ xuống */
-            width: 100%;
-            letter-spacing: 1px;
+        /* ÉP CỨNG Ô VUÔNG 28x28px */
+        .matrix-table th, .matrix-table td {
+            width: 28px; height: 28px; min-width: 28px; max-width: 28px;
+            border: 1px solid var(--cell-border); text-align: center; vertical-align: middle;
+            font-size: 10px; font-weight: bold; color: var(--text-main);
         }
-        .red-tail { color: var(--primary); font-weight: 900; }
         
-        /* MÃ ĐẶC BIỆT */
-        .row-ma .lbl { font-size: 10px; background: #fafafa; }
-        .row-ma code.n { font-size: 14px; background: #fdfdfd; border-color: #f0f0f0; color: #555; letter-spacing: 0;}
+        /* TRỤC TỌA ĐỘ BÁM DÍNH (STICKY AXIS) */
+        /* Hàng trên cùng (Ngày 1-30) */
+        .matrix-table thead th { position: sticky; top: 0; z-index: 2; background: var(--sticky-bg); color: var(--text-main); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        /* Cột bên trái (Lô 00-99) */
+        .matrix-table tbody th { position: sticky; left: 0; z-index: 2; background: var(--sticky-bg); color: var(--sticky-text); box-shadow: 1px 0 2px rgba(0,0,0,0.1); }
+        /* Ô giao điểm (Góc trái trên) */
+        .matrix-table thead th.corner { position: sticky; top: 0; left: 0; z-index: 3; background: #333; color: #fff; }
 
-        /* GIẢI ĐẶC BIỆT & GIẢI 1 */
-        .row-db { background: var(--primary-light); }
-        .row-db .nums { background: var(--primary-light); }
-        .row-db code.n { font-size: 26px; color: var(--primary); border: 2px solid #ffb3c1; padding: 10px 0; letter-spacing: 3px; box-shadow: 0 4px 10px rgba(217,4,41,0.1);}
-        
-        .row-g1 code.n { font-size: 20px; letter-spacing: 2px; padding: 10px 0; border-color: #ccc; }
-
-        /* [4] TẤM MÀN THỐNG KÊ (BOTTOM SHEET) */
-        .bottom-sheet {
-            position: absolute; left: 0; right: 0; bottom: 0;
-            height: 85vh; background: var(--bg);
-            border-top-left-radius: 24px; border-top-right-radius: 24px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
-            transform: translateY(76vh); 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
-        }
-        .bottom-sheet.active { transform: translateY(15vh); }
-
-        .drag-handle-area { padding: 15px 10px; text-align: center; cursor: pointer; border-bottom: 1px solid var(--border); background: #fff; border-top-left-radius: 24px; border-top-right-radius: 24px;}
-        .handle-bar { width: 40px; height: 5px; background: #ccc; border-radius: 10px; margin: 0 auto 10px; }
-        .sheet-title { color: var(--primary); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;}
-
-        /* NÚT THỨ (STYLE TACTILE TỪ ẢNH ÔNG LỚN) */
-        .day-row {
-            display: flex; justify-content: space-between; padding: 15px;
-            background: #fff; border-bottom: 1px solid var(--border);
-        }
-        .day-item {
-            width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
-            border-radius: 12px; font-size: 13px; font-weight: 800; color: #666;
-            cursor: pointer; transition: all 0.2s ease;
-            /* Ứng dụng Neumorphism (Ánh điện viền) */
-            background: var(--btn-bg);
-            box-shadow: var(--btn-shadow), var(--btn-inner);
-            border: 1px solid #fff;
-        }
-        .day-item:active {
-            box-shadow: inset 3px 3px 6px #d9dce0, inset -3px -3px 6px #ffffff;
-        }
-        .day-item.active { 
-            background: var(--primary); color: #fff; border-color: var(--primary); 
-            box-shadow: 0 6px 15px var(--primary-glow), inset 1px 1px 3px rgba(255,255,255,0.4); 
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        /* NỘI DUNG THỐNG KÊ */
-        .sheet-content { padding: 15px; overflow-y: auto; height: calc(100% - 130px); background: var(--bg); }
-        .stat-card { 
-            background: #fff; border: 1px solid #fff; padding: 15px; 
-            border-radius: 16px; margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-        .stat-card h4 { font-size: 14px; color: var(--primary); margin-bottom: 6px; font-weight: 900; }
-        .stat-card p { font-size: 13px; color: #444; font-weight: 600; line-height: 1.6; }
+        /* Khối 2 & 3 thu nhỏ lại chờ thiết kế */
+        .loto-block { flex: 0.5; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--text-main); border: 1px dashed var(--border-color); text-align: center; padding: 15px; background: var(--block-bg); }
 
     </style>
 </head>
 <body>
 
-<div class="app-frame">
-    
-    <div class="main-board">
-        <div class="header-app">
-            <h1>Xổ Số Miền Bắc Live</h1>
-            <p>Hà Nội — Thứ Tư — 25/03/2026</p>
-        </div>
+    <input type="checkbox" id="toggle-dark" hidden>
+    <input type="checkbox" id="toggle-mask" hidden>
+    <input type="checkbox" id="toggle-top" hidden>
+    <input type="checkbox" id="toggle-bottom" hidden>
 
-        <div class="result-table">
-            <div class="row row-ma">
-                <div class="lbl">MÃ ĐB</div>
-                <div class="nums g-3">
-                    <code class="n">3ZF</code>
-                    <code class="n">9ZD</code>
-                    <code class="n">6ZB</code>
-                </div>
-            </div>
-
-            <div class="row row-db">
-                <div class="lbl active-glow">ĐB</div>
-                <div class="nums g-cen"><code class="n">82567</code></div>
-            </div>
-
-            <div class="row row-g1">
-                <div class="lbl">G1</div>
-                <div class="nums g-cen"><code class="n">341<span class="red-tail">95</span></code></div>
-            </div>
-
-            <div class="row">
-                <div class="lbl">G2</div>
-                <div class="nums g-2">
-                    <code class="n">612<span class="red-tail">04</span></code>
-                    <code class="n">478<span class="red-tail">39</span></code>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="lbl">G3</div>
-                <div class="nums g-3">
-                    <code class="n">90153</code><code class="n">28476</code><code class="n">53821</code>
-                    <code class="n">74690</code><code class="n">16348</code><code class="n">39072</code>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="lbl">G4</div>
-                <div class="nums g-2">
-                    <code class="n">4827</code><code class="n">3160</code>
-                    <code class="n">9543</code><code class="n">7208</code>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="lbl">G5</div>
-                <div class="nums g-3">
-                    <code class="n">2164</code><code class="n">7281</code><code class="n">9920</code>
-                    <code class="n">1023</code><code class="n">5567</code><code class="n">3841</code>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="lbl">G6</div>
-                <div class="nums g-3">
-                    <code class="n">123</code><code class="n">456</code><code class="n">789</code>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="lbl">G7</div>
-                <div class="nums g-4">
-                    <code class="n">83</code><code class="n">47</code><code class="n">29</code><code class="n">61</code>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="bottom-sheet" id="statSheet">
-        <div class="drag-handle-area" onclick="toggleSheet()">
-            <div class="handle-bar"></div>
-            <div class="sheet-title">Thống kê Đặc biệt</div>
-        </div>
-
-        <div class="day-row">
-            <div class="day-item active">T2</div>
-            <div class="day-item">T3</div>
-            <div class="day-item">T4</div>
-            <div class="day-item">T5</div>
-            <div class="day-item">T6</div>
-            <div class="day-item">T7</div>
-            <div class="day-item">CN</div>
-        </div>
-
-        <div class="sheet-content">
-            <div class="stat-card">
-                <h4>Phân tích nhịp về</h4>
-                <p>Dữ liệu đặc biệt ngày hôm nay có dấu hiệu về lại đầu 8. Nhịp lô gan 25 ngày chưa nổ.</p>
-            </div>
-            <div class="stat-card">
-                <h4>Thống kê tần suất</h4>
-                <p>Cặp số 67-76 đang đứng đầu bảng tần suất xuất hiện trong 30 ngày qua.</p>
-            </div>
-            <div class="stat-card">
-                <h4>Lời khuyên từ AI</h4>
-                <p>Hãy chú trọng vào các dãy số có tổng chẵn cho kỳ quay thưởng tiếp theo. Theo dõi sát Mã Đặc Biệt để lọc cầu.</p>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<script>
-    // 1. Logic đóng mở tấm màn
-    function toggleSheet() {
-        const sheet = document.getElementById('statSheet');
-        sheet.classList.toggle('active');
+    <div class="app-wrapper">
         
-        // Haptic Feedback cho Telegram Web App
-        if(window.Telegram && Telegram.WebApp) {
-            Telegram.WebApp.HapticFeedback.impactOccurred('medium');
-        }
-    }
-
-    // 2. Logic chọn Thứ
-    const dayItems = document.querySelectorAll('.day-item');
-    dayItems.forEach(item => {
-        item.addEventListener('click', function() {
-            dayItems.forEach(d => d.classList.remove('active'));
-            this.classList.add('active');
+        <div class="top-sheet">
+            <div class="sheet-header"><label for="toggle-top" class="btn-back">🔙 Quay lại</label><div class="sheet-title">📊 THỐNG KÊ LÔ TÔ</div></div>
             
-            // Haptic Feedback nhẹ khi bấm nút
-            if(window.Telegram && Telegram.WebApp) {
-                Telegram.WebApp.HapticFeedback.selectionChanged();
-            }
-        });
-    });
+            <div class="sheet-content-loto">
+                <div class="loto-block-1">
+                    <div class="block-title-bar">BỐ CỤC 1: TẦN SUẤT LÔ (30 NGÀY)</div>
+                    <div class="matrix-container">
+                        <table class="matrix-table">
+                            <thead>
+                                <tr>
+                                    <th class="corner">Lô</th>
+                                    <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th>21</th><th>22</th><th>23</th><th>24</th><th>25</th><th>26</th><th>27</th><th>28</th><th>29</th><th>30</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><th>00</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>01</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>02</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>03</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>04</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>05</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>06</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>07</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>08</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>09</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>10</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>11</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>12</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>13</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>14</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>15</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>16</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>17</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>18</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>19</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>20</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>21</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>22</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>23</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>24</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>25</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>26</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>27</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>28</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>29</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>30</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>31</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>32</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>33</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>34</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>35</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>36</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>37</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>38</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>39</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>40</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>41</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>42</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>43</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>44</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>45</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>46</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>47</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>48</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>49</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>50</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>51</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>52</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>53</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>54</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>55</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>56</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>57</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>58</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>59</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>60</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>61</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>62</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>63</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>64</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>65</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>66</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>67</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>68</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>69</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>70</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>71</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>72</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>73</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>74</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>75</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>76</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>77</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>78</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>79</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>80</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>81</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>82</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>83</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>84</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>85</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>86</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>87</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>88</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>89</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>90</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>91</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>92</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>93</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>94</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>95</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>96</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>97</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>98</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>99</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-    // 3. Demo API (Tưởng tượng): Hàm này có thể được gọi để làm sáng đèn Giải đang quay
-    function setActiveGlow(prizeClass) {
-        // Tắt hết glow cũ
-        document.querySelectorAll('.lbl').forEach(el => el.classList.remove('active-glow'));
-        // Bật glow mới
-        const targetRow = document.querySelector('.' + prizeClass + ' .lbl');
-        if(targetRow) targetRow.classList.add('active-glow');
-    }
-    // Ví dụ: gọi setActiveGlow('row-g1') khi hệ thống đang quay Giải 1
+                <div class="loto-block"><div class="block-title">BỐ CỤC 2</div></div>
+                <div class="loto-block"><div class="block-title">BỐ CỤC 3</div></div>
+            </div>
+            <label for="toggle-top" class="top-tab">▼ Kéo Thống Kê Lô Tô</label>
+        </div>
 
-    // Telegram Auto Expand
-    if(window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-    }
-</script>
+        <div class="main-layer">
+            <div class="top-controls">
+                <div class="switch-wrap"><label class="switch"><input type="checkbox" onclick="document.getElementById('toggle-dark').click()"><span class="slider"></span></label><span class="switch-label-text">Sáng/Tối</span></div>
+                <div class="switch-wrap"><label class="switch"><input type="checkbox" onclick="document.getElementById('toggle-mask').click()"><span class="slider"></span></label><span class="switch-label-text">Lặn Số ĐB</span></div>
+            </div>
+
+            <div class="boards-feed">
+                <div class="board">
+                    <div class="board-header"><div class="board-title live">🔴 TRỰC TIẾP KẾT QUẢ XỔ SỐ</div><div class="status-blink">⏳ ĐANG CHỜ QUAY...</div><div class="board-date">Thứ Năm, Ngày 26/03/2026</div></div>
+                    <div class="row row-db"><div class="prize-name db">ĐB</div><div class="prize-results grid-1"><div class="number-box"><div class="lan-so-wrapper"><div class="scroll-mask"><div class="scroll-content"><div class="transparent-space"></div><div class="solid-cover"><span class="drag-arrow">Kéo ➡</span></div></div></div></div><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                    <div class="row"><div class="prize-name">G1</div><div class="prize-results grid-1"><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                    <div class="row"><div class="prize-name active-led">G2</div><div class="prize-results grid-2"><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                    <div class="row"><div class="prize-name">G3</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                    <div class="row"><div class="prize-name">G4</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                    <div class="row"><div class="prize-name">G5</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                    <div class="row"><div class="prize-name">G6</div><div class="prize-results grid-3"><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                    <div class="row"><div class="prize-name">G7</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span></div></span></div><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                </div>
+
+                <div class="board">
+                    <div class="board-header"><div class="board-title">Xổ số Miền Bắc</div><div class="board-date">Thứ Tư, Ngày 25/03/2026</div></div>
+                    <div class="row row-db"><div class="prize-name db">ĐB</div><div class="prize-results grid-1"><div class="number-box"><div class="lan-so-wrapper"><div class="scroll-mask"><div class="scroll-content"><div class="transparent-space"></div><div class="solid-cover"><span class="drag-arrow">Kéo ➡</span></div></div></div></div><span class="number-text">45678</span></div></div></div>
+                    <div class="row"><div class="prize-name">G1</div><div class="prize-results grid-1"><div class="number-box"><span class="number-text">99999</span></div></div></div>
+                    <div class="row"><div class="prize-name">G2</div><div class="prize-results grid-2"><div class="number-box"><span class="number-text">12312</span></div><div class="number-box"><span class="number-text">45645</span></div></div></div>
+                    <div class="row"><div class="prize-name">G3</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text">01234</span></div><div class="number-box"><span class="number-text">56789</span></div><div class="number-box"><span class="number-text">11111</span></div><div class="number-box"><span class="number-text">22222</span></div><div class="number-box"><span class="number-text">33333</span></div><div class="number-box"><span class="number-text">44444</span></div></div></div>
+                    <div class="row"><div class="prize-name">G4</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text">1234</span></div><div class="number-box"><span class="number-text">5678</span></div><div class="number-box"><span class="number-text">9012</span></div><div class="number-box"><span class="number-text">3456</span></div></div></div>
+                    <div class="row"><div class="prize-name">G5</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text">1122</span></div><div class="number-box"><span class="number-text">3344</span></div><div class="number-box"><span class="number-text">5566</span></div><div class="number-box"><span class="number-text">7788</span></div><div class="number-box"><span class="number-text">9900</span></div><div class="number-box"><span class="number-text">1234</span></div></div></div>
+                    <div class="row"><div class="prize-name">G6</div><div class="prize-results grid-3"><div class="number-box"><span class="number-text">123</span></div><div class="number-box"><span class="number-text">456</span></div><div class="number-box"><span class="number-text">789</span></div></div></div>
+                    <div class="row"><div class="prize-name">G7</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text">12</span></div><div class="number-box"><span class="number-text">34</span></div><div class="number-box"><span class="number-text">56</span></div><div class="number-box"><span class="number-text">78</span></div></div></div>
+                </div>
+            </div>
+
+            <div class="ai-sticky-bar"><div class="ai-marquee"><marquee scrollamount="4">🤖 Bot AI: Ma trận Tần suất Lô 100x30 đã được xuất chuỗi thành công...</marquee></div><input type="text" class="ai-input" placeholder="Hỏi AI..."></div>
+        </div>
+
+        <div class="bottom-sheet">
+            <label for="toggle-bottom" class="bottom-tab">▲ Kéo Thống Kê ĐB</label>
+            <div class="sheet-header"><label for="toggle-bottom" class="btn-back">🔙 Quay lại</label><div class="sheet-title">🎯 THỐNG KÊ ĐẶC BIỆT</div></div>
+            <div class="sheet-content">[Không gian 2 đang được niêm phong]</div>
+        </div>
+
+    </div>
 
 </body>
 </html>
