@@ -1,33 +1,209 @@
-/* =========================================
-   BẢN VÁ UI/UX: NÚT BẤM & CÔNG TẮC CHUẨN APPLE
-   ========================================= */
-.top-controls { 
-    display: flex; justify-content: space-between; align-items: center; 
-    padding: 12px 16px; background: var(--bg-main); 
-    border-bottom: 1px solid var(--border-color); z-index: 15; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super App Xổ Số V10 - Telegram Optimized</title>
+    <style>
+        /* RESET & KHÓA CHẶT KHUNG HÌNH (SỬA LỖI TELEGRAM NỬA MÀN HÌNH) */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; scrollbar-width: none; }
+        *::-webkit-scrollbar { display: none; }
+        
+        /* Dùng fixed và 100% thay vì 100vh để chống lỗi Viewport của WebApp Telegram */
+        html, body { background-color: #0a0a0a; display: flex; justify-content: center; align-items: flex-start; height: 100%; width: 100%; position: fixed; inset: 0; overflow: hidden; }
 
-/* Nút Lô Tô an toàn - Tăng vùng chạm, bo góc mượt hơn */
-.safe-top-btn { 
-    background: linear-gradient(180deg, #1976d2, #115293); 
-    color: white; padding: 10px 18px; font-size: 14px; font-weight: 900; 
-    border-radius: 10px; cursor: pointer; border: 1px solid #0d47a1; 
-    box-shadow: 0 4px 10px rgba(21, 101, 192, 0.4); 
-    transition: all 0.2s ease;
-}
-.safe-top-btn:active { transform: scale(0.92); box-shadow: 0 2px 5px rgba(21, 101, 192, 0.4); }
+        /* BIẾN MÀU SẮC */
+        .app-wrapper {
+            --bg-main: #ffffff; --bg-board: #f0f2f5; --text-main: #222222; --border-color: #dddddd;
+            --db-bg: #d40000; --db-text: #ffffff; --led-color: #00e676; --led-bg: #111111;
+            --sheet-bg: #f8f9fa; --block-text: #333333;
+            --cell-bg: #ffffff; --cell-border: #e0e0e0; --sticky-bg: #eeeeee; --sticky-text: #d40000; --block-bg: #ffffff;
+        }
 
-/* Cụm công tắc - Tăng size chuẩn iOS */
-.right-switches { display: flex; gap: 18px; }
-.switch-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.switch-label-text { font-size: 11px; font-weight: 800; color: var(--text-main); text-transform: uppercase;}
+        #toggle-dark:checked ~ .app-wrapper {
+            --bg-main: #121212; --bg-board: #1a1a1a; --text-main: #eeeeee; --border-color: #333333; --sheet-bg: #111111; --block-text: #dddddd;
+            --cell-bg: #1e1e1e; --cell-border: #333333; --sticky-bg: #2a2a2a; --sticky-text: #ff5252; --block-bg: #1a1a1a;
+        }
 
-/* Kích thước công tắc to hơn, dễ gạt */
-.switch { position: relative; display: inline-block; width: 46px; height: 24px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #bdbdbd; transition: .3s; border-radius: 24px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);}
-.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3);}
+        /* KHUNG APP 480PX */
+        .app-wrapper { max-width: 480px; width: 100%; height: 100%; position: relative; background-color: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
 
-input:checked + .slider { background-color: var(--db-bg); }
-input:checked + .slider:before { transform: translateX(22px); }
+        /* LỚP 1: GIAO DIỆN CHÍNH */
+        .main-layer { flex: 1; width: 100%; display: flex; flex-direction: column; background: var(--bg-board); overflow: hidden; position: relative; }
+        
+        /* BẢN VÁ UI/UX: NÚT BẤM & CÔNG TẮC CHUẨN APPLE */
+        .top-controls { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--bg-main); border-bottom: 1px solid var(--border-color); z-index: 15; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .safe-top-btn { background: linear-gradient(180deg, #1976d2, #115293); color: white; padding: 10px 18px; font-size: 14px; font-weight: 900; border-radius: 10px; cursor: pointer; border: 1px solid #0d47a1; box-shadow: 0 4px 10px rgba(21, 101, 192, 0.4); transition: all 0.2s ease; }
+        .safe-top-btn:active { transform: scale(0.92); box-shadow: 0 2px 5px rgba(21, 101, 192, 0.4); }
+
+        .right-switches { display: flex; gap: 18px; }
+        .switch-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .switch-label-text { font-size: 11px; font-weight: 800; color: var(--text-main); text-transform: uppercase;}
+        
+        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #bdbdbd; transition: .3s; border-radius: 24px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);}
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3);}
+        input:checked + .slider { background-color: var(--db-bg); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* KHU VỰC CUỘN BẢNG KQXS (VÙNG CHẠM ĐỂ KÉO) */
+        .boards-feed { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 60px; -webkit-overflow-scrolling: touch; }
+        .board { background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color); padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .board-header { text-align: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-color); }
+        .board-title { font-size: 16px; font-weight: 900; color: var(--text-main); text-transform: uppercase; }
+        .board-title.live { color: var(--db-bg); }
+        .status-blink { font-size: 12px; color: var(--db-bg); animation: blink 1s infinite; font-weight: bold; margin-top: 4px; }
+        .board-date { font-size: 12px; color: #888; font-style: italic; margin-top: 4px; font-weight: bold; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        /* LƯỚI 27 HÀNG SỐ */
+        .row { display: flex; margin-bottom: 6px; align-items: stretch; gap: 6px; }
+        .prize-name { width: 38px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; background: var(--bg-board); border: 1px solid var(--border-color); border-radius: 4px; }
+        .prize-name.db { background: var(--db-bg); color: var(--db-text); border: none; }
+        .prize-name.active-led { background: var(--led-bg); color: var(--led-color); border-color: var(--led-color); box-shadow: 0 0 8px var(--led-color); }
+        .prize-results { flex-grow: 1; display: grid; gap: 4px; }
+        .grid-1 { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: repeat(3, 1fr); } .grid-4 { grid-template-columns: repeat(4, 1fr); } .grid-6 { grid-template-columns: repeat(6, 1fr); }
+
+        .number-box { background: var(--bg-main); border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; border-radius: 4px; height: 30px; position: relative; overflow: hidden; }
+        .number-text { font-size: 15px; font-weight: bold; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; white-space: nowrap; width: 100%;}
+        .grid-6 .number-text, .grid-4 .number-text { font-size: 13px; letter-spacing: 0; } 
+        .row-db .number-box { height: 46px; } .row-db .number-text { font-size: 26px; color: var(--db-bg); letter-spacing: 5px; z-index: 1; }
+
+        .dots-wrapper { display: flex; justify-content: center; align-items: center; gap: 3px; width: 100%; }
+        .dot { width: 5px; height: 5px; background-color: #aaa; border-radius: 50%; animation: wave 1.2s infinite ease-in-out; }
+        .dot:nth-child(2) { animation-delay: -1.1s; } .dot:nth-child(3) { animation-delay: -1.0s; } .dot:nth-child(4) { animation-delay: -0.9s; } .dot:nth-child(5) { animation-delay: -0.8s; }
+        @keyframes wave { 0%, 40%, 100% { transform: translateY(0); opacity: 0.5; } 20% { transform: translateY(-3px); opacity: 1; } }
+
+        /* LẶN SỐ */
+        .lan-so-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
+        #toggle-mask:checked ~ .app-wrapper .lan-so-wrapper { display: block; }
+        .scroll-mask { width: 100%; height: 100%; overflow-x: auto; direction: rtl; scroll-snap-type: x mandatory; }
+        .scroll-content { width: 200%; height: 100%; display: flex; }
+        .transparent-space { width: 50%; height: 100%; scroll-snap-align: start; }
+        .solid-cover { width: 50%; height: 100%; scroll-snap-align: start; background: linear-gradient(90deg, #37474f, #546e7a); display: flex; align-items: center; justify-content: flex-start; border-left: 3px solid #ffca28; box-shadow: -5px 0 15px rgba(0,0,0,0.5); direction: ltr; }
+        .drag-arrow { color: #ffca28; font-size: 12px; font-weight: bold; padding-left: 10px; animation: bounceLeft 1s infinite alternate; white-space: nowrap; }
+        @keyframes bounceLeft { 0% { transform: translateX(5px); } 100% { transform: translateX(-5px); } }
+
+        /* THANH KÉO ĐẶC BIỆT */
+        .bottom-bar-fixed { position: absolute; bottom: 0; left: 0; width: 100%; z-index: 15; background: linear-gradient(0deg, #d32f2f, #c62828); color: white; padding: 12px 0; text-align: center; font-size: 13px; font-weight: 900; text-transform: uppercase; cursor: pointer; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); border-top: 2px solid #b71c1c; }
+
+        /* LỚP 2 & 3 (SHEETS) */
+        .top-sheet, .bottom-sheet { position: absolute; left: 0; width: 100%; height: 100%; background: var(--sheet-bg); z-index: 25; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s 0.4s; display: flex; flex-direction: column; visibility: hidden; }
+        .top-sheet { top: 0; transform: translateY(-100%); }
+        #toggle-top:checked ~ .app-wrapper .top-sheet { transform: translateY(0); visibility: visible; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s; }
+        .bottom-sheet { bottom: 0; transform: translateY(100%); }
+        #toggle-bottom:checked ~ .app-wrapper .bottom-sheet { transform: translateY(0); visibility: visible; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s; }
+
+        .sheet-header { padding: 16px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); background: var(--bg-main); }
+        .btn-back { background: #f0f0f0; color: #333; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; margin-right: 15px; }
+        .sheet-title { font-size: 16px; font-weight: bold; color: var(--text-main); }
+        
+        /* MA TRẬN LÔ TÔ */
+        .sheet-content-loto { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+        .loto-block-1 { flex: 2; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: var(--block-bg); border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; }
+        .block-title-bar { background: linear-gradient(90deg, #d40000, #ff5252); color: #fff; padding: 8px 12px; font-weight: bold; font-size: 14px; text-transform: uppercase; }
+        .matrix-container { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; background: var(--cell-bg); }
+        .matrix-table { border-collapse: collapse; table-layout: fixed; }
+        .matrix-table th, .matrix-table td { width: 28px; height: 28px; min-width: 28px; max-width: 28px; border: 1px solid var(--cell-border); text-align: center; vertical-align: middle; font-size: 10px; font-weight: bold; color: var(--text-main); }
+        .matrix-table thead th { position: sticky; top: 0; z-index: 2; background: var(--sticky-bg); color: var(--text-main); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .matrix-table tbody th { position: sticky; left: 0; z-index: 2; background: var(--sticky-bg); color: var(--sticky-text); box-shadow: 1px 0 2px rgba(0,0,0,0.1); }
+        .matrix-table thead th.corner { position: sticky; top: 0; left: 0; z-index: 3; background: #333; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <input type="checkbox" id="toggle-dark" hidden>
+    <input type="checkbox" id="toggle-mask" hidden>
+    <input type="checkbox" id="toggle-top" hidden>
+    <input type="checkbox" id="toggle-bottom" hidden>
+
+    <div class="app-wrapper">
+        
+        <div class="top-sheet">
+            <div class="sheet-header"><label for="toggle-top" class="btn-back">🔙 Quay lại</label><div class="sheet-title">📊 THỐNG KÊ LÔ TÔ</div></div>
+            <div class="sheet-content-loto">
+                <div class="loto-block-1">
+                    <div class="block-title-bar">BỐ CỤC 1: TẦN SUẤT LÔ (30 NGÀY)</div>
+                    <div class="matrix-container">
+                        <table class="matrix-table">
+                            <thead><tr><th class="corner">Lô</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr></thead>
+                            <tbody>
+                                <tr><th>00</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><th>01</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-layer">
+            <div class="top-controls">
+                <label for="toggle-top" class="safe-top-btn">▼ T.KÊ LÔ TÔ</label>
+                <div class="right-switches">
+                    <div class="switch-wrap"><label class="switch"><input type="checkbox" onclick="document.getElementById('toggle-dark').click()"><span class="slider"></span></label><span class="switch-label-text">Sáng/Tối</span></div>
+                    <div class="switch-wrap"><label class="switch"><input type="checkbox" onclick="document.getElementById('toggle-mask').click()"><span class="slider"></span></label><span class="switch-label-text">Lặn Số</span></div>
+                </div>
+            </div>
+
+            <div class="boards-feed" id="boards-feed-container">
+                <div class="board">
+                    <div class="board-header"><div class="board-title live">🔴 TRỰC TIẾP KẾT QUẢ</div><div class="status-blink">⏳ ĐANG CHỜ QUAY...</div><div class="board-date">Hôm nay</div></div>
+                    <div class="row row-db"><div class="prize-name db">ĐB</div><div class="prize-results grid-1"><div class="number-box"><div class="lan-so-wrapper"><div class="scroll-mask"><div class="scroll-content"><div class="transparent-space"></div><div class="solid-cover"><span class="drag-arrow">Kéo ➡</span></div></div></div></div><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                    <div class="row"><div class="prize-name">G1</div><div class="prize-results grid-1"><div class="number-box"><span class="number-text"><div class="dots-wrapper"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></span></div></div></div>
+                    <div class="row"><div class="prize-name">G2</div><div class="prize-results grid-2"><div class="number-box"><span class="number-text">-----</span></div><div class="number-box"><span class="number-text">-----</span></div></div></div>
+                    <div class="row"><div class="prize-name">G3</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text">-----</span></div><div class="number-box"><span class="number-text">-----</span></div><div class="number-box"><span class="number-text">-----</span></div><div class="number-box"><span class="number-text">-----</span></div><div class="number-box"><span class="number-text">-----</span></div><div class="number-box"><span class="number-text">-----</span></div></div></div>
+                    <div class="row"><div class="prize-name">G4</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text">----</span></div><div class="number-box"><span class="number-text">----</span></div><div class="number-box"><span class="number-text">----</span></div><div class="number-box"><span class="number-text">----</span></div></div></div>
+                    <div class="row"><div class="prize-name">G5</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text">----</span></div><div class="number-box"><span class="number-text">----</span></div><div class="number-box"><span class="number-text">----</span></div><div class="number-box"><span class="number-text">----</span></div><div class="number-box"><span class="number-text">----</span></div><div class="number-box"><span class="number-text">----</span></div></div></div>
+                    <div class="row"><div class="prize-name">G6</div><div class="prize-results grid-3"><div class="number-box"><span class="number-text">---</span></div><div class="number-box"><span class="number-text">---</span></div><div class="number-box"><span class="number-text">---</span></div></div></div>
+                    <div class="row"><div class="prize-name">G7</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text">--</span></div><div class="number-box"><span class="number-text">--</span></div><div class="number-box"><span class="number-text">--</span></div><div class="number-box"><span class="number-text">--</span></div></div></div>
+                </div>
+            </div>
+
+            <label for="toggle-bottom" class="bottom-bar-fixed">▲ KÉO THỐNG KÊ ĐB</label>
+        </div>
+
+        <div class="bottom-sheet">
+            <div class="sheet-header"><label for="toggle-bottom" class="btn-back">🔙 Quay lại</label><div class="sheet-title">🎯 THỐNG KÊ ĐẶC BIỆT</div></div>
+            <div style="padding: 20px; text-align: center; opacity: 0.6; color: var(--text-main);">[Không gian 2 đang chờ thiết kế]</div>
+        </div>
+
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const boardsFeed = document.getElementById('boards-feed-container');
+        
+        function createBoardTemplate(index) {
+            let date = new Date();
+            date.setDate(date.getDate() - index);
+            let dateString = date.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            return `
+            <div class="board">
+                <div class="board-header"><div class="board-title">Xổ số Miền Bắc</div><div class="board-date">${dateString}</div></div>
+                <div class="row row-db"><div class="prize-name db">ĐB</div><div class="prize-results grid-1"><div class="number-box"><span class="number-text">45678</span></div></div></div>
+                <div class="row"><div class="prize-name">G1</div><div class="prize-results grid-1"><div class="number-box"><span class="number-text">99999</span></div></div></div>
+                <div class="row"><div class="prize-name">G2</div><div class="prize-results grid-2"><div class="number-box"><span class="number-text">12312</span></div><div class="number-box"><span class="number-text">45645</span></div></div></div>
+                <div class="row"><div class="prize-name">G3</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text">01234</span></div><div class="number-box"><span class="number-text">56789</span></div><div class="number-box"><span class="number-text">11111</span></div><div class="number-box"><span class="number-text">22222</span></div><div class="number-box"><span class="number-text">33333</span></div><div class="number-box"><span class="number-text">44444</span></div></div></div>
+                <div class="row"><div class="prize-name">G4</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text">7777</span></div><div class="number-box"><span class="number-text">8888</span></div><div class="number-box"><span class="number-text">9999</span></div><div class="number-box"><span class="number-text">0000</span></div></div></div>
+                <div class="row"><div class="prize-name">G5</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text">1212</span></div><div class="number-box"><span class="number-text">3434</span></div><div class="number-box"><span class="number-text">5656</span></div><div class="number-box"><span class="number-text">7878</span></div><div class="number-box"><span class="number-text">9090</span></div><div class="number-box"><span class="number-text">1313</span></div></div></div>
+                <div class="row"><div class="prize-name">G6</div><div class="prize-results grid-3"><div class="number-box"><span class="number-text">111</span></div><div class="number-box"><span class="number-text">222</span></div><div class="number-box"><span class="number-text">333</span></div></div></div>
+                <div class="row"><div class="prize-name">G7</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text">12</span></div><div class="number-box"><span class="number-text">34</span></div><div class="number-box"><span class="number-text">56</span></div><div class="number-box"><span class="number-text">78</span></div></div></div>
+            </div>`;
+        }
+
+        try {
+            let historyBoardsHTML = "";
+            for (let i = 1; i <= 59; i++) {
+                historyBoardsHTML += createBoardTemplate(i);
+            }
+            boardsFeed.insertAdjacentHTML('beforeend', historyBoardsHTML);
+        } catch (error) {
+            console.error("❌ Lỗi render:", error);
+        }
+    });
+    </script>
+</body>
+</html>
