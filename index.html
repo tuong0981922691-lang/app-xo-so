@@ -1,84 +1,33 @@
-<script>
-    // 1. DỮ LIỆU MẪU TỪ BACKEND TRẢ VỀ (Giả lập Server Response)
-    // Đảm bảo tuyệt đối quy chuẩn: 8 Giải - 27 Hàng - Kèm 6 hoặc 8 Mã Đặc Biệt
-    const serverData = {
-        ngayQuay: "Thứ Năm, Ngày 26/03/2026",
-        maDacBiet: ["1A", "2B", "3C", "4D", "5E", "6F", "7G", "8H"], // Có thể 6 hoặc 8 mã
-        giaiDacBiet: ["88888"],
-        giaiNhat: ["12345"],
-        giaiHai: ["55555", "66666"],
-        giaiBa: ["11111", "22222", "33333", "44444", "55555", "66666"],
-        giaiTu: ["7777", "8888", "9999", "0000"],
-        giaiNam: ["1212", "3434", "5656", "7878", "9090", "1313"],
-        giaiSau: ["111", "222", "333"],
-        giaiBay: ["12", "34", "56", "78"]
-    };
+/* =========================================
+   BẢN VÁ UI/UX: NÚT BẤM & CÔNG TẮC CHUẨN APPLE
+   ========================================= */
+.top-controls { 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 12px 16px; background: var(--bg-main); 
+    border-bottom: 1px solid var(--border-color); z-index: 15; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+}
 
-    // 2. HÀM XỬ LÝ LÕI: BƠM DỮ LIỆU KHÔNG LÀM VỠ DOM
-    function pumpLotteryData(data) {
-        try {
-            // Lấy đúng Bảng đang Live (Trực tiếp)
-            const liveBoard = document.querySelector('.board:first-child');
-            if (!liveBoard) return;
+/* Nút Lô Tô an toàn - Tăng vùng chạm, bo góc mượt hơn */
+.safe-top-btn { 
+    background: linear-gradient(180deg, #1976d2, #115293); 
+    color: white; padding: 10px 18px; font-size: 14px; font-weight: 900; 
+    border-radius: 10px; cursor: pointer; border: 1px solid #0d47a1; 
+    box-shadow: 0 4px 10px rgba(21, 101, 192, 0.4); 
+    transition: all 0.2s ease;
+}
+.safe-top-btn:active { transform: scale(0.92); box-shadow: 0 2px 5px rgba(21, 101, 192, 0.4); }
 
-            // Cập nhật Ngày tháng
-            const dateNode = liveBoard.querySelector('.board-date');
-            if (dateNode) dateNode.textContent = data.ngayQuay;
+/* Cụm công tắc - Tăng size chuẩn iOS */
+.right-switches { display: flex; gap: 18px; }
+.switch-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.switch-label-text { font-size: 11px; font-weight: 800; color: var(--text-main); text-transform: uppercase;}
 
-            // Mapping dữ liệu với các Class của DOM
-            const prizeMapping = [
-                { classSelector: '.row-db .prize-results', dataArray: data.giaiDacBiet },
-                { classSelector: '.row:nth-child(3) .prize-results', dataArray: data.giaiNhat },
-                { classSelector: '.row:nth-child(4) .prize-results', dataArray: data.giaiHai },
-                { classSelector: '.row:nth-child(5) .prize-results', dataArray: data.giaiBa },
-                { classSelector: '.row:nth-child(6) .prize-results', dataArray: data.giaiTu },
-                { classSelector: '.row:nth-child(7) .prize-results', dataArray: data.giaiNam },
-                { classSelector: '.row:nth-child(8) .prize-results', dataArray: data.giaiSau },
-                { classSelector: '.row:nth-child(9) .prize-results', dataArray: data.giaiBay }
-            ];
+/* Kích thước công tắc to hơn, dễ gạt */
+.switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #bdbdbd; transition: .3s; border-radius: 24px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);}
+.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3);}
 
-            // Vòng lặp bắn dữ liệu vào 27 ô
-            prizeMapping.forEach(prize => {
-                const resultContainer = liveBoard.querySelector(prize.classSelector);
-                if (resultContainer && prize.dataArray) {
-                    const numberBoxes = resultContainer.querySelectorAll('.number-text');
-                    
-                    for (let i = 0; i < numberBoxes.length; i++) {
-                        // Kẽ hở bọc thép: Nếu chưa có số (Live), giữ nguyên hiệu ứng dot
-                        if (prize.dataArray[i] && prize.dataArray[i] !== "") {
-                            numberBoxes[i].innerHTML = prize.dataArray[i];
-                        }
-                    }
-                }
-            });
-
-            // 3. XỬ LÝ ĐẶC BIỆT: BƠM MÃ HIỆU 6-8 MÃ (Chống tràn màn hình)
-            const maDbContainer = liveBoard.querySelector('.row-db .prize-results');
-            if (maDbContainer && data.maDacBiet.length > 0) {
-                // Xóa mã cũ nếu có để tránh đè lặp
-                const oldCodes = maDbContainer.querySelector('.ma-db-wrap');
-                if (oldCodes) oldCodes.remove();
-
-                // Tạo khung chứa mã bọc thép linh hoạt
-                const codeWrap = document.createElement('div');
-                codeWrap.className = 'ma-db-wrap';
-                codeWrap.style.cssText = 'display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-top: 5px; width: 100%;';
-
-                data.maDacBiet.forEach(ma => {
-                    const codeSpan = document.createElement('span');
-                    codeSpan.textContent = ma;
-                    codeSpan.style.cssText = 'background: var(--bg-board); border: 1px solid var(--border-color); color: var(--text-main); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
-                    codeWrap.appendChild(codeSpan);
-                });
-
-                maDbContainer.appendChild(codeWrap);
-            }
-
-        } catch (error) {
-            console.error("LỖI TỬ HUYỆT KHI BƠM DỮ LIỆU:", error);
-        }
-    }
-
-    // Kích hoạt Engine
-    pumpLotteryData(serverData);
-</script>
+input:checked + .slider { background-color: var(--db-bg); }
+input:checked + .slider:before { transform: translateX(22px); }
