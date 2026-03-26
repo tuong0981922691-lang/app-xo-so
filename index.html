@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <title>Super App Xổ Số V10 - Bản Khóa Bố Cục</title>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Super App Xổ Số V10 - Telegram Optimized</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; scrollbar-width: none; }
@@ -29,7 +34,7 @@
 
         .main-layer { flex: 1; width: 100%; display: flex; flex-direction: column; background: var(--bg-board); overflow: hidden; position: relative; }
         
-        /* [ĐÃ VÁ] ÉP MỎNG HEADER TIẾT KIỆM KHÔNG GIAN */
+        /* HEADER NHỎ GỌN */
         .top-controls { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--bg-main); border-bottom: 1px solid var(--border-color); z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .safe-top-btn { background: linear-gradient(180deg, #1976d2, #115293); color: white; padding: 6px 14px; font-size: 13px; font-weight: 900; border-radius: 6px; cursor: pointer; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .right-switches { display: flex; gap: 12px; }
@@ -46,14 +51,14 @@
         .boards-feed { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 90px; -webkit-overflow-scrolling: touch; }
         .board { background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color); padding: 8px 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         
-        /* [ĐÃ VÁ] HEADER BẢNG KẾT QUẢ CỰC NHỎ GỌN & HIỆN ĐẠI */
+        /* HEADER BẢNG KẾT QUẢ */
         .board-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
         .province-badge { background: var(--db-bg); color: white; font-size: 11px; font-weight: 900; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
         .province-badge.live { background: #00e676; color: #000; box-shadow: 0 0 8px rgba(0,230,118,0.5); animation: pulseLive 1.5s infinite; }
         .board-date { font-size: 11px; color: #888; font-weight: 600; font-style: italic; }
         @keyframes pulseLive { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-        /* [ĐÃ KHÓA] LƯỚI BỐ CỤC VÀ Ô SỐ PHẢN GƯƠNG */
+        /* LƯỚI BỐ CỤC VÀ Ô SỐ PHẢN GƯƠNG */
         .row { display: flex; margin-bottom: 5px; align-items: stretch; gap: 5px; }
         .prize-name { width: 36px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: 900; background: var(--bg-board); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-main); transition: all 0.2s ease; }
         .prize-name.db { background: var(--db-bg); color: var(--db-text); border: none; font-size: 14px; box-shadow: 0 2px 4px rgba(212,0,0,0.3); }
@@ -70,7 +75,7 @@
         .row-db .number-box { height: 42px; border: 2px solid var(--db-bg); background: var(--bg-main); } 
         .row-db .number-text { font-size: 24px; font-weight: 900; color: var(--db-bg); letter-spacing: 4px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
 
-        /* [ĐÃ KHÓA] HỆ THỐNG ĐÈN XANH */
+        /* HỆ THỐNG ĐÈN XANH */
         .spinning-row-label { background: #e8f5e9 !important; border-color: #00e676 !important; color: #00c853 !important; box-shadow: inset 0 0 8px rgba(0,230,118,0.2); }
         .spinning-box { border: 2px solid #00e676 !important; box-shadow: 0 0 8px rgba(0,230,118,0.4) !important; background: #ffffff !important; }
         @keyframes flashGreen { 0% { background-color: #00e676; box-shadow: 0 0 10px #00e676; transform: scale(1.02); } 100% { background-color: var(--glass-bg); transform: scale(1); } }
@@ -80,7 +85,7 @@
         .dot:nth-child(2) { animation-delay: 0.2s; } .dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes wave { 0% { transform: translateY(0); opacity: 0.5; } 100% { transform: translateY(-3px); opacity: 1; background-color: var(--border-color); } }
 
-        /* [ĐÃ VÁ] NÚT NỔI FIXED LƠ LỬNG (CHỐNG MỌI FOOTER CHÈN ÉP) */
+        /* NÚT NỔI FIXED LƠ LỬNG */
         .bottom-bar-fixed { position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 9999; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: white; padding: 10px 24px; text-align: center; font-size: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.4); border: 1.5px solid #ff5252; white-space: nowrap; }
     </style>
 </head>
@@ -126,15 +131,24 @@
     </div>
 
     <script>
+    // BỘ ĐIỀU KHIỂN TELEGRAM WEBAPP ĐỘC QUYỀN (THỰC THI NGAY KHI MỞ)
     document.addEventListener("DOMContentLoaded", function() {
-        // HÀM LẤY TỈNH THEO NGÀY CHUẨN LỊCH XSMB
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData !== "") {
+            const tg = window.Telegram.WebApp;
+            tg.expand(); // Ép bung Full màn hình chống lỗi cắt nửa
+            tg.setBackgroundColor("#0a0a0a"); // Đồng bộ viền
+            tg.ready(); // Khai báo sẵn sàng
+        }
+    });
+
+    // ENGINE RENDER BẢNG & QUAY SỐ (ĐÃ KHÓA BỌC THÉP)
+    document.addEventListener("DOMContentLoaded", function() {
         function getProvinceByDate(dateObj) {
-            const day = dateObj.getDay(); // 0 là Chủ Nhật
+            const day = dateObj.getDay(); 
             const provinces = ["Thái Bình", "Hà Nội", "Quảng Ninh", "Bắc Ninh", "Hà Nội", "Hải Phòng", "Nam Định"];
             return provinces[day];
         }
 
-        // 1. IN ĐỦ 60 BẢNG LỊCH SỬ NHỎ GỌN
         const boardsFeed = document.getElementById('boards-feed-container');
         function createBoardTemplate(index) {
             let d = new Date(); d.setDate(d.getDate() - index);
@@ -161,9 +175,6 @@
         for(let i=1; i<=60; i++) htmlStr += createBoardTemplate(i); 
         boardsFeed.insertAdjacentHTML('beforeend', htmlStr);
 
-        // ==========================================
-        // 2. ENGINE ĐỒNG BỘ ĐÈN (KHÓA CHẶT ASYNC)
-        // ==========================================
         const drawSequence = [
             { row: '.row:nth-child(2)', labelId: 'label-g1', vals: ['90153'] },
             { row: '.row:nth-child(3)', labelId: 'label-g2', vals: ['28476', '44556'] },
@@ -212,7 +223,6 @@
                 const labelEl = document.getElementById(step.labelId);
                 const boxEls = rowEl.querySelectorAll('.number-box');
 
-                // Bật đèn dải (CHẮC CHẮN SẼ KHÔNG NHẢY TRƯỚC KHI QUAY XONG)
                 labelEl.classList.add('spinning-row-label');
 
                 for (let i = 0; i < step.vals.length; i++) {
@@ -220,8 +230,6 @@
                     const text = box.querySelector('.number-text');
 
                     box.classList.add('spinning-box');
-                    
-                    // CHỜ ĐÚNG 6 GIÂY (Không lọt khe)
                     await delay(6000); 
 
                     box.classList.remove('spinning-box');
@@ -231,15 +239,13 @@
                     box.classList.add('flash-green-active');
                     setTimeout(() => box.classList.remove('flash-green-active'), 1000);
                 }
-
-                // CHỈ TẮT ĐÈN KHI ĐÃ QUAY XONG TOÀN BỘ Ô TRONG HÀNG ĐÓ
                 labelEl.classList.remove('spinning-row-label');
             }
 
             const liveProv = document.getElementById('live-province');
             let todayProv = getProvinceByDate(new Date());
             liveProv.textContent = "XSMB - " + todayProv;
-            liveProv.className = "province-badge"; // Tắt hiệu ứng nhấp nháy
+            liveProv.className = "province-badge"; 
 
             await delay(10000);
             resetBoard();
