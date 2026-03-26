@@ -3,39 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Super App Xổ Số V9 - Tần Suất Lô</title>
+    <title>Super App Xổ Số V10 - Telegram Optimized</title>
     <style>
-        /* RESET & XÓA THANH CUỘN */
+        /* RESET & KHÓA CHẶT KHUNG HÌNH (SỬA LỖI TELEGRAM NỬA MÀN HÌNH) */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; scrollbar-width: none; }
         *::-webkit-scrollbar { display: none; }
-        body { background-color: #0a0a0a; display: flex; justify-content: center; align-items: flex-start; height: 100vh; overflow: hidden; width: 100vw; }
+        
+        /* Dùng fixed và 100% thay vì 100vh để chống lỗi Viewport của WebApp Telegram */
+        html, body { background-color: #0a0a0a; display: flex; justify-content: center; align-items: flex-start; height: 100%; width: 100%; position: fixed; inset: 0; overflow: hidden; }
 
-        /* BIẾN MÀU SẮC (SÁNG) */
+        /* BIẾN MÀU SẮC */
         .app-wrapper {
             --bg-main: #ffffff; --bg-board: #f0f2f5; --text-main: #222222; --border-color: #dddddd;
             --db-bg: #d40000; --db-text: #ffffff; --led-color: #00e676; --led-bg: #111111;
             --sheet-bg: #f8f9fa; --block-text: #333333;
-            /* Màu Ma trận Tần suất */
-            --cell-bg: #ffffff; --cell-border: #e0e0e0; 
-            --sticky-bg: #eeeeee; --sticky-text: #d40000;
-            --block-bg: #ffffff;
+            --cell-bg: #ffffff; --cell-border: #e0e0e0; --sticky-bg: #eeeeee; --sticky-text: #d40000; --block-bg: #ffffff;
         }
 
-        /* DARK MODE */
         #toggle-dark:checked ~ .app-wrapper {
             --bg-main: #121212; --bg-board: #1a1a1a; --text-main: #eeeeee; --border-color: #333333; --sheet-bg: #111111; --block-text: #dddddd;
-            /* Màu Ma trận Tần suất (Tối) */
-            --cell-bg: #1e1e1e; --cell-border: #333333; 
-            --sticky-bg: #2a2a2a; --sticky-text: #ff5252;
-            --block-bg: #1a1a1a;
+            --cell-bg: #1e1e1e; --cell-border: #333333; --sticky-bg: #2a2a2a; --sticky-text: #ff5252; --block-bg: #1a1a1a;
         }
 
         /* KHUNG APP 480PX */
-        .app-wrapper { max-width: 480px; width: 100%; height: 100%; position: relative; background-color: var(--bg-main); color: var(--text-main); overflow: hidden; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
+        .app-wrapper { max-width: 480px; width: 100%; height: 100%; position: relative; background-color: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
 
-        /* LỚP 1: GIAO DIỆN CHÍNH (ĐÓNG BĂNG NHƯ CŨ) */
-        .main-layer { width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--bg-board); }
-        .top-controls { display: flex; justify-content: flex-end; gap: 15px; padding: 10px 16px; background: var(--bg-main); border-bottom: 1px solid var(--border-color); z-index: 5; }
+        /* =========================================
+           LỚP 1: GIAO DIỆN CHÍNH
+           ========================================= */
+        .main-layer { flex: 1; width: 100%; display: flex; flex-direction: column; background: var(--bg-board); overflow: hidden; position: relative; }
+        
+        /* HEADER THIẾT KẾ MỚI CHỐNG ĐÈ NÚT */
+        .top-controls { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--bg-main); border-bottom: 1px solid var(--border-color); z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        /* Nút Lô Tô an toàn bên Trái */
+        .safe-top-btn { background: linear-gradient(180deg, #1976d2, #1565c0); color: white; padding: 8px 16px; font-size: 13px; font-weight: 900; border-radius: 8px; cursor: pointer; border: 2px solid #0d47a1; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .safe-top-btn:active { transform: scale(0.95); }
+
+        /* Cụm công tắc an toàn bên Phải */
+        .right-switches { display: flex; gap: 15px; }
         .switch-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .switch-label-text { font-size: 10px; font-weight: bold; color: var(--text-main); }
         .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
@@ -45,7 +51,8 @@
         input:checked + .slider { background-color: var(--db-bg); }
         input:checked + .slider:before { transform: translateX(18px); }
 
-        .boards-feed { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 20px; }
+        /* KHU VỰC CUỘN BẢNG KQXS (ĐÃ SỬA LỖI GHOSTING) */
+        .boards-feed { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 60px; -webkit-overflow-scrolling: touch; }
         .board { background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color); padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .board-header { text-align: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-color); }
         .board-title { font-size: 16px; font-weight: 900; color: var(--text-main); text-transform: uppercase; }
@@ -58,7 +65,6 @@
         .prize-name { width: 38px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; background: var(--bg-board); border: 1px solid var(--border-color); border-radius: 4px; }
         .prize-name.db { background: var(--db-bg); color: var(--db-text); border: none; }
         .prize-name.active-led { background: var(--led-bg); color: var(--led-color); border-color: var(--led-color); box-shadow: 0 0 8px var(--led-color); }
-
         .prize-results { flex-grow: 1; display: grid; gap: 4px; }
         .grid-1 { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: repeat(3, 1fr); } .grid-4 { grid-template-columns: repeat(4, 1fr); } .grid-6 { grid-template-columns: repeat(6, 1fr); }
 
@@ -72,6 +78,7 @@
         .dot:nth-child(2) { animation-delay: -1.1s; } .dot:nth-child(3) { animation-delay: -1.0s; } .dot:nth-child(4) { animation-delay: -0.9s; } .dot:nth-child(5) { animation-delay: -0.8s; }
         @keyframes wave { 0%, 40%, 100% { transform: translateY(0); opacity: 0.5; } 20% { transform: translateY(-3px); opacity: 1; } }
 
+        /* LẶN SỐ */
         .lan-so-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
         #toggle-mask:checked ~ .app-wrapper .lan-so-wrapper { display: block; }
         .scroll-mask { width: 100%; height: 100%; overflow-x: auto; direction: rtl; scroll-snap-type: x mandatory; }
@@ -81,66 +88,39 @@
         .drag-arrow { color: #ffca28; font-size: 12px; font-weight: bold; padding-left: 10px; animation: bounceLeft 1s infinite alternate; white-space: nowrap; }
         @keyframes bounceLeft { 0% { transform: translateX(5px); } 100% { transform: translateX(-5px); } }
 
-        .ai-sticky-bar { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-top: 1px solid #90caf9; padding: 12px 16px; display: flex; align-items: center; gap: 10px; z-index: 10; padding-bottom: 25px; }
-        .ai-marquee { flex-grow: 1; overflow: hidden; white-space: nowrap; font-size: 13px; font-weight: bold; color: #1565c0; }
-        .ai-input { padding: 6px 12px; border-radius: 20px; border: 1px solid #90caf9; font-size: 12px; width: 120px; outline: none; }
-        .load-more-text { text-align: center; font-size: 12px; color: #888; padding: 20px 0; font-style: italic; }
+        /* THANH KÉO ĐẶC BIỆT NẰM ĐÁY CHỐT CỨNG (SỬA LỖI MẤT NÚT) */
+        .bottom-bar-fixed {
+            position: absolute; bottom: 0; left: 0; width: 100%; z-index: 15;
+            background: linear-gradient(0deg, #d32f2f, #c62828); color: white;
+            padding: 12px 0; text-align: center; font-size: 13px; font-weight: 900; text-transform: uppercase;
+            cursor: pointer; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); border-top: 2px solid #b71c1c;
+        }
 
-        /* LỚP 2 & 3 (SHEETS) */
-        .top-sheet, .bottom-sheet { position: absolute; left: 0; width: 100%; height: 100%; background: var(--sheet-bg); z-index: 20; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column;}
+        /* LỚP 2 & 3 (SHEETS) - ĐÃ THÊM LỆNH visibility ĐỂ CHỐNG BÓNG MA (GHOSTING) */
+        .top-sheet, .bottom-sheet { position: absolute; left: 0; width: 100%; height: 100%; background: var(--sheet-bg); z-index: 25; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s 0.4s; display: flex; flex-direction: column; visibility: hidden; }
+        
         .top-sheet { top: 0; transform: translateY(-100%); }
-        .top-tab { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); background: linear-gradient(180deg, #1976d2, #1565c0); color: white; padding: 6px 20px; font-size: 12px; font-weight: 900; text-transform: uppercase; border-radius: 0 0 12px 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid #0d47a1; border-top: none; z-index: 25; }
-        #toggle-top:checked ~ .app-wrapper .top-sheet { transform: translateY(0); }
+        #toggle-top:checked ~ .app-wrapper .top-sheet { transform: translateY(0); visibility: visible; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s; }
 
         .bottom-sheet { bottom: 0; transform: translateY(100%); }
-        .bottom-tab { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); background: linear-gradient(0deg, #d32f2f, #c62828); color: white; padding: 6px 20px; font-size: 12px; font-weight: 900; text-transform: uppercase; border-radius: 12px 12px 0 0; cursor: pointer; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); border: 2px solid #b71c1c; border-bottom: none; z-index: 25; }
-        #toggle-bottom:checked ~ .app-wrapper .bottom-sheet { transform: translateY(0); }
+        #toggle-bottom:checked ~ .app-wrapper .bottom-sheet { transform: translateY(0); visibility: visible; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s; }
 
         .sheet-header { padding: 16px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); background: var(--bg-main); }
         .btn-back { background: #f0f0f0; color: #333; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; margin-right: 15px; }
         .sheet-title { font-size: 16px; font-weight: bold; color: var(--text-main); }
         
-        /* =========================================
-           KHÔNG GIAN 3: THIẾT KẾ MA TRẬN LÔ TÔ (BỐ CỤC 1)
-           ========================================= */
+        /* KHÔNG GIAN 3: MA TRẬN LÔ TÔ (GIỮ NGUYÊN) */
         .sheet-content-loto { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
-        
-        /* Khối 1 mở rộng để chứa bảng */
-        .loto-block-1 {
-            flex: 2; /* Chiếm nhiều diện tích hơn Khối 2, 3 */
-            border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-            background: var(--block-bg); border: 1px solid var(--border-color);
-            display: flex; flex-direction: column; overflow: hidden;
-        }
+        .loto-block-1 { flex: 2; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: var(--block-bg); border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; }
         .block-title-bar { background: linear-gradient(90deg, #d40000, #ff5252); color: #fff; padding: 8px 12px; font-weight: bold; font-size: 14px; text-transform: uppercase; }
-
-        /* Bảng Ma Trận 101 Hàng x 30 Cột */
-        .matrix-container {
-            flex: 1; overflow: auto; /* Cho phép vuốt ngang, vuốt dọc */
-            -webkit-overflow-scrolling: touch; /* Vuốt mượt trên iOS */
-            background: var(--cell-bg);
-        }
-        
+        .matrix-container { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; background: var(--cell-bg); }
         .matrix-table { border-collapse: collapse; table-layout: fixed; }
-        
-        /* ÉP CỨNG Ô VUÔNG 28x28px */
-        .matrix-table th, .matrix-table td {
-            width: 28px; height: 28px; min-width: 28px; max-width: 28px;
-            border: 1px solid var(--cell-border); text-align: center; vertical-align: middle;
-            font-size: 10px; font-weight: bold; color: var(--text-main);
-        }
-        
-        /* TRỤC TỌA ĐỘ BÁM DÍNH (STICKY AXIS) */
-        /* Hàng trên cùng (Ngày 1-30) */
+        .matrix-table th, .matrix-table td { width: 28px; height: 28px; min-width: 28px; max-width: 28px; border: 1px solid var(--cell-border); text-align: center; vertical-align: middle; font-size: 10px; font-weight: bold; color: var(--text-main); }
         .matrix-table thead th { position: sticky; top: 0; z-index: 2; background: var(--sticky-bg); color: var(--text-main); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        /* Cột bên trái (Lô 00-99) */
         .matrix-table tbody th { position: sticky; left: 0; z-index: 2; background: var(--sticky-bg); color: var(--sticky-text); box-shadow: 1px 0 2px rgba(0,0,0,0.1); }
-        /* Ô giao điểm (Góc trái trên) */
         .matrix-table thead th.corner { position: sticky; top: 0; left: 0; z-index: 3; background: #333; color: #fff; }
 
-        /* Khối 2 & 3 thu nhỏ lại chờ thiết kế */
         .loto-block { flex: 0.5; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--text-main); border: 1px dashed var(--border-color); text-align: center; padding: 15px; background: var(--block-bg); }
-
     </style>
 </head>
 <body>
@@ -154,18 +134,12 @@
         
         <div class="top-sheet">
             <div class="sheet-header"><label for="toggle-top" class="btn-back">🔙 Quay lại</label><div class="sheet-title">📊 THỐNG KÊ LÔ TÔ</div></div>
-            
             <div class="sheet-content-loto">
                 <div class="loto-block-1">
                     <div class="block-title-bar">BỐ CỤC 1: TẦN SUẤT LÔ (30 NGÀY)</div>
                     <div class="matrix-container">
                         <table class="matrix-table">
-                            <thead>
-                                <tr>
-                                    <th class="corner">Lô</th>
-                                    <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th>21</th><th>22</th><th>23</th><th>24</th><th>25</th><th>26</th><th>27</th><th>28</th><th>29</th><th>30</th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th class="corner">Lô</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th>21</th><th>22</th><th>23</th><th>24</th><th>25</th><th>26</th><th>27</th><th>28</th><th>29</th><th>30</th></tr></thead>
                             <tbody>
                                 <tr><th>00</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                                 <tr><th>01</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -178,110 +152,23 @@
                                 <tr><th>08</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                                 <tr><th>09</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                                 <tr><th>10</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>11</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>12</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>13</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>14</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>15</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>16</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>17</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>18</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>19</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>20</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>21</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>22</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>23</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>24</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>25</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>26</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>27</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>28</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>29</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>30</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>31</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>32</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>33</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>34</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>35</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>36</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>37</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>38</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>39</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>40</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>41</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>42</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>43</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>44</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>45</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>46</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>47</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>48</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>49</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>50</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>51</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>52</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>53</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>54</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>55</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>56</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>57</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>58</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>59</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>60</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>61</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>62</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>63</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>64</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>65</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>66</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>67</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>68</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>69</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>70</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>71</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>72</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>73</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>74</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>75</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>76</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>77</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>78</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>79</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>80</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>81</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>82</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>83</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>84</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>85</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>86</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>87</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>88</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>89</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>90</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>91</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>92</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>93</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>94</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>95</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>96</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>97</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>98</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><th>99</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
                 <div class="loto-block"><div class="block-title">BỐ CỤC 2</div></div>
                 <div class="loto-block"><div class="block-title">BỐ CỤC 3</div></div>
             </div>
-            <label for="toggle-top" class="top-tab">▼ Kéo Thống Kê Lô Tô</label>
         </div>
 
         <div class="main-layer">
+            
             <div class="top-controls">
-                <div class="switch-wrap"><label class="switch"><input type="checkbox" onclick="document.getElementById('toggle-dark').click()"><span class="slider"></span></label><span class="switch-label-text">Sáng/Tối</span></div>
-                <div class="switch-wrap"><label class="switch"><input type="checkbox" onclick="document.getElementById('toggle-mask').click()"><span class="slider"></span></label><span class="switch-label-text">Lặn Số ĐB</span></div>
+                <label for="toggle-top" class="safe-top-btn">▼ T.KÊ LÔ TÔ</label>
+                <div class="right-switches">
+                    <div class="switch-wrap"><label class="switch"><input type="checkbox" onclick="document.getElementById('toggle-dark').click()"><span class="slider"></span></label><span class="switch-label-text">Sáng/Tối</span></div>
+                    <div class="switch-wrap"><label class="switch"><input type="checkbox" onclick="document.getElementById('toggle-mask').click()"><span class="slider"></span></label><span class="switch-label-text">Lặn Số ĐB</span></div>
+                </div>
             </div>
 
             <div class="boards-feed">
@@ -303,20 +190,15 @@
                     <div class="row"><div class="prize-name">G1</div><div class="prize-results grid-1"><div class="number-box"><span class="number-text">99999</span></div></div></div>
                     <div class="row"><div class="prize-name">G2</div><div class="prize-results grid-2"><div class="number-box"><span class="number-text">12312</span></div><div class="number-box"><span class="number-text">45645</span></div></div></div>
                     <div class="row"><div class="prize-name">G3</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text">01234</span></div><div class="number-box"><span class="number-text">56789</span></div><div class="number-box"><span class="number-text">11111</span></div><div class="number-box"><span class="number-text">22222</span></div><div class="number-box"><span class="number-text">33333</span></div><div class="number-box"><span class="number-text">44444</span></div></div></div>
-                    <div class="row"><div class="prize-name">G4</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text">1234</span></div><div class="number-box"><span class="number-text">5678</span></div><div class="number-box"><span class="number-text">9012</span></div><div class="number-box"><span class="number-text">3456</span></div></div></div>
-                    <div class="row"><div class="prize-name">G5</div><div class="prize-results grid-6"><div class="number-box"><span class="number-text">1122</span></div><div class="number-box"><span class="number-text">3344</span></div><div class="number-box"><span class="number-text">5566</span></div><div class="number-box"><span class="number-text">7788</span></div><div class="number-box"><span class="number-text">9900</span></div><div class="number-box"><span class="number-text">1234</span></div></div></div>
-                    <div class="row"><div class="prize-name">G6</div><div class="prize-results grid-3"><div class="number-box"><span class="number-text">123</span></div><div class="number-box"><span class="number-text">456</span></div><div class="number-box"><span class="number-text">789</span></div></div></div>
-                    <div class="row"><div class="prize-name">G7</div><div class="prize-results grid-4"><div class="number-box"><span class="number-text">12</span></div><div class="number-box"><span class="number-text">34</span></div><div class="number-box"><span class="number-text">56</span></div><div class="number-box"><span class="number-text">78</span></div></div></div>
-                </div>
+                    </div>
             </div>
 
-            <div class="ai-sticky-bar"><div class="ai-marquee"><marquee scrollamount="4">🤖 Bot AI: Ma trận Tần suất Lô 100x30 đã được xuất chuỗi thành công...</marquee></div><input type="text" class="ai-input" placeholder="Hỏi AI..."></div>
+            <label for="toggle-bottom" class="bottom-bar-fixed">▲ KÉO THỐNG KÊ ĐB</label>
         </div>
 
         <div class="bottom-sheet">
-            <label for="toggle-bottom" class="bottom-tab">▲ Kéo Thống Kê ĐB</label>
             <div class="sheet-header"><label for="toggle-bottom" class="btn-back">🔙 Quay lại</label><div class="sheet-title">🎯 THỐNG KÊ ĐẶC BIỆT</div></div>
-            <div class="sheet-content">[Không gian 2 đang được niêm phong]</div>
+            <div style="padding: 20px; text-align: center; opacity: 0.6; color: var(--text-main);">[Không gian 2 đang được niêm phong]</div>
         </div>
 
     </div>
